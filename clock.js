@@ -47,7 +47,7 @@ instance.prototype.config_fields = function () {
 		{
 			type: 'textinput',
 			id: 'host',
-			label: 'Target IP',
+			label: 'Clock IP address (you can also use broadcast)',
 			width: 8,
 			regex: self.REGEX_IP
 		},
@@ -56,7 +56,8 @@ instance.prototype.config_fields = function () {
 			id: 'port',
 			label: 'Target Port',
 			width: 4,
-			regex: self.REGEX_PORT
+			regex: self.REGEX_PORT,
+		default: 1245
 		}
 	]
 };
@@ -70,71 +71,112 @@ instance.prototype.destroy = function() {
 instance.prototype.actions = function(system) {
 	var self = this;
 	self.system.emit('instance_actions', self.id, {
-		'send_blank': {
-			label: 'Send message',
+		'normal_mode': {
+			label: 'Display current time',
+			options: [
+			]
+		},
+		'kill_display': {
+			label: 'Display off',
+			options: [
+			]
+		},
+		'start_countup': {
+			label: 'Start counting up',
+			options: [
+			]
+		},
+		'start_countdown': {
+			label: 'Primary countdown: start',
 			options: [
 				{
 					 type: 'textinput',
-					 label: 'OSC Path',
-					 id: 'path',
-					 default: '/osc/path'
+					 label: 'Timer (seconds)',
+					 id: 'int',
+					 default: 60,
+					 regex: self.REGEX_UNSIGNED_NUMBER
 				}
 			]
 		},
-		'send_int': {
-			label: 'Send integer',
+		'modify_countdown': {
+			label: 'Primary countdown: modify',
 			options: [
 				{
 					 type: 'textinput',
-					 label: 'OSC Path',
-					 id: 'path',
-					 default: '/osc/path'
-				},
-				{
-					 type: 'textinput',
-					 label: 'Value',
+					 label: 'Timer (seconds)',
 					 id: 'int',
-					 default: 1,
+					 default: 60,
 					 regex: self.REGEX_SIGNED_NUMBER
 				}
 			]
 		},
-		'send_float': {
-			label: 'Send float',
+		'stop_countdown': {
+			label: 'Primary countdown: stop',
+			options: [
+			]
+		},
+		'start_countdown2': {
+			label: 'Secondary countdown: start',
 			options: [
 				{
 					 type: 'textinput',
-					 label: 'OSC Path',
-					 id: 'path',
-					 default: '/osc/path'
-				},
-				{
-					 type: 'textinput',
-					 label: 'Value',
-					 id: 'float',
-					 default: 1,
-					 regex: self.REGEX_SIGNED_FLOAT
+					 label: 'Timer (seconds)',
+					 id: 'int',
+					 default: 60,
+					 regex: self.REGEX_UNSIGNED_NUMBER
 				}
 			]
 		},
-		'send_string': {
-			label: 'Send string',
+		'modify_countdown2': {
+			label: 'Secondary countdown: modify',
 			options: [
 				{
 					 type: 'textinput',
-					 label: 'OSC Path',
-					 id: 'path',
-					 default: '/osc/path'
+					 label: 'Timer (seconds)',
+					 id: 'int',
+					 default: 60,
+					 regex: self.REGEX_SIGNED_NUMBER
+				}
+			]
+		},
+		'stop_countdown2': {
+			label: 'Secondary countdown: stop',
+			options: [
+			]
+		},
+		'send_text': {
+			label: 'Send text',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Text',
+					id: 'text',
+					width: 4,
+					default: 'stop'
 				},
 				{
 					 type: 'textinput',
-					 label: 'Value',
-					 id: 'string',
-					 default: "text"
+					 label: 'Red',
+					 id: 'red',
+					 default: 255,
+					 regex: self.REGEX_UNSIGNED_FLOAT
+				},
+				{
+					 type: 'textinput',
+					 label: 'Green',
+					 id: 'green',
+					 default: 0,
+					 regex: self.REGEX_UNSIGNED_FLOAT
+				},
+				{
+					 type: 'textinput',
+					 label: 'Blue',
+					 id: 'blue',
+					 default: 0,
+					 regex: self.REGEX_UNSIGNED_FLOAT
 				}
 			]
-		}
-
+		},
 	});
 }
 
@@ -147,6 +189,82 @@ instance.prototype.action = function(action) {
 		debug('sending',self.config.host, self.config.port, action.options.path);
 		self.system.emit('osc_send', self.config.host, self.config.port, action.options.path, [])
 	}
+
+	if (action.action == 'kill_display') {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/kill", [])
+	}
+
+	if (action.action == 'normal_mode') {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/normal", [])
+	}
+
+	if (action.action == 'start_countup') {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countup/start", [])
+	}
+
+	if (action.action == 'start_countdown') {
+		var bol = {
+				type: "i",
+				value: parseInt(action.options.int)
+		};
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/start", [ bol ]);
+	}
+
+	if (action.action == 'start_countdown2') {
+		var bol = {
+				type: "i",
+				value: parseInt(action.options.int)
+		};
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown2/start", [ bol ]);
+	}
+
+	if (action.action == 'modify_countdown') {
+		var bol = {
+				type: "i",
+				value: parseInt(action.options.int)
+		};
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/modify", [ bol ]);
+	}
+
+
+	if (action.action == 'modify_countdown2') {
+		var bol = {
+				type: "i",
+				value: parseInt(action.options.int)
+		};
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown2/modify", [ bol ]);
+	}
+
+	if (action.action == 'stop_countdown') {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/stop", [])
+	}
+
+	if (action.action == 'stop_countdown2') {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown2/stop", [])
+	}
+
+
+	if (action.action == 'send_text') {
+		var red = {
+				type: "f",
+				value: parseFloat(action.options.red)
+		};
+		var green = {
+				type: "f",
+				value: parseFloat(action.options.green)
+		};
+		var blue = {
+				type: "f",
+				value: parseFloat(action.options.blue)
+		};
+		var text = {
+				type: "s",
+				value: "" + action.options.text
+		};
+
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/display", [ red,green,blue,text ]);
+	}
+
 
 	if (action.action == 'send_int') {
 		var bol = {

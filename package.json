@@ -1,8 +1,5 @@
 {
 	"name": "clock-8001",
-	"legacy": [
-		"direct_osc"
-	],
 	"version": "1.0.0",
 	"api_version": "1.0.0",
 	"keywords": [
