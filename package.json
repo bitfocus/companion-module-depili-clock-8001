@@ -1,22 +1,22 @@
 {
-	"name": "osc",
+	"name": "clock-8001",
 	"legacy": [
 		"direct_osc"
 	],
-	"version": "1.0.1",
+	"version": "1.0.0",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Protocol",
-		"Generic"
+		"Clock-8001"
 	],
-	"manufacturer": "Generic",
-	"product": "OSC",
-	"shortname": "osc",
-	"description": "Direct: OSC plugin for Companion",
-	"main": "osc.js",
+	"manufacturer": "Assembly",
+	"product": "Clock-8001",
+	"shortname": "clock-8001",
+	"description": "Clock 8001 real time clock and stage timer",
+	"main": "clock.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"author": "William Viker <william@bitfocus.io>",
+	"author": "Vesa-Pekka Palmu",
 	"license": "MIT"
 }
