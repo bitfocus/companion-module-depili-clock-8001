@@ -86,13 +86,11 @@ instance.prototype.init_feedbacks = function() {
 			]
 		}
 	};
-
 	self.setFeedbackDefinitions(feedbacks);
 };
 
 instance.prototype.init_variables = function() {
 	var self = this;
-
 	var variables = [
 		{
 			label: 'State of timer (NORMAL, COUNTUP, COUNTDOWN, OFF)',
@@ -123,7 +121,6 @@ instance.prototype.init_variables = function() {
 			name: 'tally'
 		},
 	];
-
 	self.updateState();
 	self.setVariableDefinitions(variables);
 };
@@ -131,36 +128,29 @@ instance.prototype.init_variables = function() {
 instance.prototype.updateState = function() {
 	var self = this;
 	var info = self.feedbackstate.time.split(':');
-
 	self.setVariable('time', self.feedbackstate.time);
 	self.setVariable('time_hm', info[0] + ':' + info[1]);
 	self.setVariable('time_h', info[0]);
 	self.setVariable('time_m', info[1]);
 	self.setVariable('time_s', info[2]);
-
 	self.setVariable('state', self.feedbackstate.state);
 	self.setVariable('tally', self.feedbackstate.tally);
 };
 
 instance.prototype.init_osc = function() {
 	var self = this;
-
 	if (self.listener) {
 		self.listener.close();
 	};
-
 	self.listener = new OSC.UDPPort({
 		localAddress: "0.0.0.0",
 		localPort: self.config.localport,
 		metadata: true
 	});
-
 	self.listener.open();
-
 	self.listener.on("ready", function () {
 		self.ready = true;
 	});
-
 	self.listener.on("message", function (message) {
 		if (message.address.match(/^\/clock\/state/)) {
 			if (message.args.length == 5) {
@@ -336,21 +326,15 @@ instance.prototype.actions = function(system) {
 
 instance.prototype.action = function(action) {
 	var self = this;
-
-	debug('action: ', action);
-
 	if (action.action == 'kill_display') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/kill", [])
 	}
-
 	if (action.action == 'normal_mode') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/normal", [])
 	}
-
 	if (action.action == 'start_countup') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countup/start", [])
 	}
-
 	if (action.action == 'start_countdown') {
 		var bol = {
 			type: "i",
@@ -358,7 +342,6 @@ instance.prototype.action = function(action) {
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/start", [ bol ]);
 	}
-
 	if (action.action == 'start_countdown2') {
 		var bol = {
 			type: "i",
@@ -366,7 +349,6 @@ instance.prototype.action = function(action) {
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown2/start", [ bol ]);
 	}
-
 	if (action.action == 'modify_countdown') {
 		var bol = {
 			type: "i",
@@ -374,8 +356,6 @@ instance.prototype.action = function(action) {
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/modify", [ bol ]);
 	}
-
-
 	if (action.action == 'modify_countdown2') {
 		var bol = {
 			type: "i",
@@ -383,16 +363,12 @@ instance.prototype.action = function(action) {
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown2/modify", [ bol ]);
 	}
-
 	if (action.action == 'stop_countdown') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/stop", [])
 	}
-
 	if (action.action == 'stop_countdown2') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown2/stop", [])
 	}
-
-
 	if (action.action == 'send_text') {
 		var red = {
 			type: "f",
@@ -410,11 +386,8 @@ instance.prototype.action = function(action) {
 			type: "s",
 			value: "" + action.options.text
 		};
-
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/display", [ red,green,blue,text ]);
 	}
-
-
 	if (action.action == 'send_int') {
 		var bol = {
 			type: "i",
@@ -422,7 +395,6 @@ instance.prototype.action = function(action) {
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, action.options.path, [ bol ]);
 	}
-
 	if (action.action == 'send_float') {
 		var bol = {
 			type: "f",
@@ -430,7 +402,6 @@ instance.prototype.action = function(action) {
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, action.options.path, [ bol ]);
 	}
-
 	if (action.action == 'send_string') {
 		var bol = {
 			type: "s",
@@ -438,16 +409,11 @@ instance.prototype.action = function(action) {
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, action.options.path, [ bol ]);
 	}
-
 };
-
-
 
 instance.prototype.init_presets = function (updates) {
 	var self = this;
 	var presets = [];
-
-
 	presets.push({
 		category: 'Timer control',
 		label: 'Set 5 min',
@@ -467,7 +433,6 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
 	presets.push({
 		category: 'Timer control',
 		label: 'Set 10 min',
@@ -487,13 +452,12 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
 	presets.push({
 		category: 'Timer control',
-		label: 'Set 15 min',
+		label: 'Set 30 min',
 		bank: {
 			style: 'text',
-			text: 'SET\\n15 MIN',
+			text: 'SET\\n30 MIN',
 			size: '18',
 			color: '16777215',
 			bgcolor: self.rgb(0,0,255)
@@ -502,12 +466,11 @@ instance.prototype.init_presets = function (updates) {
 			{
 				action: 'start_countdown',
 				options: {
-					int: '900',
+					int: '1800',
 				}
 			}
 		]
 	});
-
 	presets.push({
 		category: 'Timer control',
 		label: 'Stop',
@@ -524,16 +487,15 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
 	presets.push({
 		category: 'Timer control',
 		label: 'Add 1min',
 		bank: {
 			style: 'text',
-			text: '+1min',
+			text: '+1\\nMIN',
 			size: '18',
 			color: '16777215',
-			bgcolor: self.rgb(255,0,255)
+			bgcolor: self.rgb(0,0,255)
 		},
 		actions: [
 			{
@@ -544,16 +506,15 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
 	presets.push({
 		category: 'Timer control',
 		label: 'Remove 1min',
 		bank: {
 			style: 'text',
-			text: '-1min',
+			text: '-1\\nMIN',
 			size: '18',
 			color: '16777215',
-			bgcolor: self.rgb(255,0,255)
+			bgcolor: self.rgb(0,0,255)
 		},
 		actions: [
 			{
@@ -564,7 +525,117 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
+	presets.push({
+		category: 'Timer 2 control',
+		label: 'Set 5 min',
+		bank: {
+			style: 'text',
+			text: 'SET\\n5 MIN',
+			size: '18',
+			color: '16777215',
+			bgcolor:self.rgb(0, 204, 255)
+		},
+		actions: [
+			{
+				action: 'start_countdown2',
+				options: {
+					int: '300',
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Timer 2 control',
+		label: 'Set 10 min',
+		bank: {
+			style: 'text',
+			text: 'SET\\n10 MIN',
+			size: '18',
+			color: '16777215',
+			bgcolor:self.rgb(0, 204, 255)
+		},
+		actions: [
+			{
+				action: 'start_countdown2',
+				options: {
+					int: '600',
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Timer 2 control',
+		label: 'Set 30 min',
+		bank: {
+			style: 'text',
+			text: 'SET\\n30 MIN',
+			size: '18',
+			color: '16777215',
+			bgcolor:self.rgb(0, 204, 255)
+		},
+		actions: [
+			{
+				action: 'start_countdown2',
+				options: {
+					int: '1800',
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Timer 2 control',
+		label: 'Stop',
+		bank: {
+			style: 'text',
+			text: 'STOP',
+			size: '18',
+			color: '16777215',
+			bgcolor:self.rgb(0, 204, 255)
+		},
+		actions: [
+			{
+				action: 'stop_countdown2'
+			}
+		]
+	});
+	presets.push({
+		category: 'Timer 2 control',
+		label: 'Add 1min',
+		bank: {
+			style: 'text',
+			text: '+1\\nMIN',
+			size: '18',
+			color: '16777215',
+			bgcolor:self.rgb(0, 204, 255)
+		},
+		actions: [
+			{
+				action: 'modify_countdown2',
+				options: {
+					int: '60'
+				}
+			}
+		]
+	});
+	presets.push({
+		category: 'Timer 2 control',
+		label: 'Remove 1min',
+		bank: {
+			style: 'text',
+			text: '-1\\nMIN',
+			size: '18',
+			color: '16777215',
+			bgcolor:self.rgb(0, 204, 255)
+		},
+		actions: [
+			{
+				action: 'modify_countdown2',
+				options: {
+					int: '-60'
+				}
+			}
+		]
+	});
 	presets.push({
 		category: 'Mode',
 		label: 'Black',
@@ -572,7 +643,7 @@ instance.prototype.init_presets = function (updates) {
 			style: 'text',
 			text: 'BLACK',
 			size: '18',
-			color: self.rgb(255,255,255),
+			color: self.rgb(255,128,0),
 			bgcolor: self.rgb(0,0,0)
 		},
 		actions: [
@@ -591,15 +662,14 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
 	presets.push({
 		category: 'Mode',
-		label: 'Clock',
+		label: 'Time of day',
 		bank: {
 			style: 'text',
-			text: 'CLOCK',
+			text: 'Time\\nof day',
 			size: '18',
-			color: self.rgb(255,255,255),
+			color: self.rgb(255,128,0),
 			bgcolor: self.rgb(0,0,0)
 		},
 		actions: [
@@ -618,15 +688,14 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
 	presets.push({
 		category: 'Mode',
-		label: 'Countup',
+		label: 'Count up',
 		bank: {
 			style: 'text',
-			text: 'COUNTUP',
+			text: 'COUNT\nUP',
 			size: '18',
-			color: self.rgb(255,255,255),
+			color: self.rgb(255,128,0),
 			bgcolor: self.rgb(0,0,0)
 		},
 		actions: [
@@ -645,7 +714,6 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
 	// Show timer
 	presets.push({
 		category: 'Display time',
@@ -670,7 +738,6 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
 	presets.push({
 		category: 'Display time',
 		label: 'Minutes',
@@ -694,7 +761,6 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
 	presets.push({
 		category: 'Display time',
 		label: 'Seconds',
@@ -718,12 +784,31 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
-
+	presets.push({
+		category: 'Display time',
+		label: 'Tally',
+		bank: {
+			style: 'text',
+			text: '$(label:tally)',
+			size: 'auto',
+			color: self.rgb(255,255,255),
+			bgcolor: 6619136
+		},
+		actions: [],
+		feedbacks: [
+			{
+				options: {
+					pause_fg: 16777215,
+					pause_bg: 7954688,
+					run_fg: 16777215,
+					run_bg: 26112
+				},
+				type: "state_color",
+			}
+		]
+	});
 	self.setPresetDefinitions(presets);
 }
-
-
-
 
 instance_skel.extendedBy(instance);
 exports = module.exports = instance;
