@@ -25,6 +25,7 @@ instance.prototype.updateConfig = function(config) {
 
 	self.config = config;
 	self.init_osc();
+	self.init_presets();
 };
 instance.prototype.init = function() {
 	var self = this;
@@ -35,6 +36,7 @@ instance.prototype.init = function() {
 	log = self.log;
 	self.init_osc();
 	self.init_variables();
+	self.init_presets();
 };
 
 instance.prototype.init_feedbacks = function() {
@@ -201,7 +203,7 @@ instance.prototype.config_fields = function () {
 			label: 'Target Port',
 			width: 4,
 			regex: self.REGEX_PORT,
-		default: 1245
+			default: 1245
 		},
 		{
 			type: 'textinput',
@@ -209,7 +211,7 @@ instance.prototype.config_fields = function () {
 			label: 'Local Port',
 			width: 4,
 			regex: self.REGEX_PORT,
-		default: 1245
+			default: 1245
 		}
 	]
 };
@@ -242,11 +244,11 @@ instance.prototype.actions = function(system) {
 			label: 'Primary countdown: start',
 			options: [
 				{
-					 type: 'textinput',
-					 label: 'Timer (seconds)',
-					 id: 'int',
-					 default: 60,
-					 regex: self.REGEX_UNSIGNED_NUMBER
+					type: 'textinput',
+					label: 'Timer (seconds)',
+					id: 'int',
+					default: 60,
+					regex: self.REGEX_UNSIGNED_NUMBER
 				}
 			]
 		},
@@ -254,11 +256,11 @@ instance.prototype.actions = function(system) {
 			label: 'Primary countdown: modify',
 			options: [
 				{
-					 type: 'textinput',
-					 label: 'Timer (seconds)',
-					 id: 'int',
-					 default: 60,
-					 regex: self.REGEX_SIGNED_NUMBER
+					type: 'textinput',
+					label: 'Timer (seconds)',
+					id: 'int',
+					default: 60,
+					regex: self.REGEX_SIGNED_NUMBER
 				}
 			]
 		},
@@ -271,11 +273,11 @@ instance.prototype.actions = function(system) {
 			label: 'Secondary countdown: start',
 			options: [
 				{
-					 type: 'textinput',
-					 label: 'Timer (seconds)',
-					 id: 'int',
-					 default: 60,
-					 regex: self.REGEX_UNSIGNED_NUMBER
+					type: 'textinput',
+					label: 'Timer (seconds)',
+					id: 'int',
+					default: 60,
+					regex: self.REGEX_UNSIGNED_NUMBER
 				}
 			]
 		},
@@ -283,11 +285,11 @@ instance.prototype.actions = function(system) {
 			label: 'Secondary countdown: modify',
 			options: [
 				{
-					 type: 'textinput',
-					 label: 'Timer (seconds)',
-					 id: 'int',
-					 default: 60,
-					 regex: self.REGEX_SIGNED_NUMBER
+					type: 'textinput',
+					label: 'Timer (seconds)',
+					id: 'int',
+					default: 60,
+					regex: self.REGEX_SIGNED_NUMBER
 				}
 			]
 		},
@@ -307,25 +309,25 @@ instance.prototype.actions = function(system) {
 					default: 'stop'
 				},
 				{
-					 type: 'textinput',
-					 label: 'Red',
-					 id: 'red',
-					 default: 255,
-					 regex: self.REGEX_UNSIGNED_FLOAT
+					type: 'textinput',
+					label: 'Red',
+					id: 'red',
+					default: 255,
+					regex: self.REGEX_UNSIGNED_FLOAT
 				},
 				{
-					 type: 'textinput',
-					 label: 'Green',
-					 id: 'green',
-					 default: 0,
-					 regex: self.REGEX_UNSIGNED_FLOAT
+					type: 'textinput',
+					label: 'Green',
+					id: 'green',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_FLOAT
 				},
 				{
-					 type: 'textinput',
-					 label: 'Blue',
-					 id: 'blue',
-					 default: 0,
-					 regex: self.REGEX_UNSIGNED_FLOAT
+					type: 'textinput',
+					label: 'Blue',
+					id: 'blue',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_FLOAT
 				}
 			]
 		},
@@ -336,11 +338,6 @@ instance.prototype.action = function(action) {
 	var self = this;
 
 	debug('action: ', action);
-
-	if (action.action == 'send_blank') {
-		debug('sending',self.config.host, self.config.port, action.options.path);
-		self.system.emit('osc_send', self.config.host, self.config.port, action.options.path, [])
-	}
 
 	if (action.action == 'kill_display') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/kill", [])
@@ -356,24 +353,24 @@ instance.prototype.action = function(action) {
 
 	if (action.action == 'start_countdown') {
 		var bol = {
-				type: "i",
-				value: parseInt(action.options.int)
+			type: "i",
+			value: parseInt(action.options.int)
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/start", [ bol ]);
 	}
 
 	if (action.action == 'start_countdown2') {
 		var bol = {
-				type: "i",
-				value: parseInt(action.options.int)
+			type: "i",
+			value: parseInt(action.options.int)
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown2/start", [ bol ]);
 	}
 
 	if (action.action == 'modify_countdown') {
 		var bol = {
-				type: "i",
-				value: parseInt(action.options.int)
+			type: "i",
+			value: parseInt(action.options.int)
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/modify", [ bol ]);
 	}
@@ -381,8 +378,8 @@ instance.prototype.action = function(action) {
 
 	if (action.action == 'modify_countdown2') {
 		var bol = {
-				type: "i",
-				value: parseInt(action.options.int)
+			type: "i",
+			value: parseInt(action.options.int)
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown2/modify", [ bol ]);
 	}
@@ -398,20 +395,20 @@ instance.prototype.action = function(action) {
 
 	if (action.action == 'send_text') {
 		var red = {
-				type: "f",
-				value: parseFloat(action.options.red)
+			type: "f",
+			value: parseFloat(action.options.red)
 		};
 		var green = {
-				type: "f",
-				value: parseFloat(action.options.green)
+			type: "f",
+			value: parseFloat(action.options.green)
 		};
 		var blue = {
-				type: "f",
-				value: parseFloat(action.options.blue)
+			type: "f",
+			value: parseFloat(action.options.blue)
 		};
 		var text = {
-				type: "s",
-				value: "" + action.options.text
+			type: "s",
+			value: "" + action.options.text
 		};
 
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/display", [ red,green,blue,text ]);
@@ -420,29 +417,313 @@ instance.prototype.action = function(action) {
 
 	if (action.action == 'send_int') {
 		var bol = {
-				type: "i",
-				value: parseInt(action.options.int)
+			type: "i",
+			value: parseInt(action.options.int)
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, action.options.path, [ bol ]);
 	}
 
 	if (action.action == 'send_float') {
 		var bol = {
-				type: "f",
-				value: parseFloat(action.options.float)
+			type: "f",
+			value: parseFloat(action.options.float)
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, action.options.path, [ bol ]);
 	}
 
 	if (action.action == 'send_string') {
 		var bol = {
-				type: "s",
-				value: "" + action.options.string
+			type: "s",
+			value: "" + action.options.string
 		};
 		self.system.emit('osc_send', self.config.host, self.config.port, action.options.path, [ bol ]);
 	}
 
 };
+
+
+
+instance.prototype.init_presets = function (updates) {
+	var self = this;
+	var presets = [];
+
+
+	presets.push({
+		category: 'Timer control',
+		label: 'Set 5 min',
+		bank: {
+			style: 'text',
+			text: 'SET\\n5 MIN',
+			size: '18',
+			color: '16777215',
+			bgcolor: self.rgb(0,0,255)
+		},
+		actions: [
+			{
+				action: 'start_countdown',
+				options: {
+					int: '300',
+				}
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Timer control',
+		label: 'Set 10 min',
+		bank: {
+			style: 'text',
+			text: 'SET\\n10 MIN',
+			size: '18',
+			color: '16777215',
+			bgcolor: self.rgb(0,0,255)
+		},
+		actions: [
+			{
+				action: 'start_countdown',
+				options: {
+					int: '600',
+				}
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Timer control',
+		label: 'Set 15 min',
+		bank: {
+			style: 'text',
+			text: 'SET\\n15 MIN',
+			size: '18',
+			color: '16777215',
+			bgcolor: self.rgb(0,0,255)
+		},
+		actions: [
+			{
+				action: 'start_countdown',
+				options: {
+					int: '900',
+				}
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Timer control',
+		label: 'Stop',
+		bank: {
+			style: 'text',
+			text: 'STOP',
+			size: '18',
+			color: '16777215',
+			bgcolor: self.rgb(0,0,255)
+		},
+		actions: [
+			{
+				action: 'stop_countdown'
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Timer control',
+		label: 'Add 1min',
+		bank: {
+			style: 'text',
+			text: '+1min',
+			size: '18',
+			color: '16777215',
+			bgcolor: self.rgb(255,0,255)
+		},
+		actions: [
+			{
+				action: 'modify_countdown',
+				options: {
+					int: '60'
+				}
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Timer control',
+		label: 'Remove 1min',
+		bank: {
+			style: 'text',
+			text: '-1min',
+			size: '18',
+			color: '16777215',
+			bgcolor: self.rgb(255,0,255)
+		},
+		actions: [
+			{
+				action: 'modify_countdown',
+				options: {
+					int: '-60'
+				}
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Mode',
+		label: 'Black',
+		bank: {
+			style: 'text',
+			text: 'BLACK',
+			size: '18',
+			color: self.rgb(255,255,255),
+			bgcolor: self.rgb(0,0,0)
+		},
+		actions: [
+			{
+				action: 'kill_display'
+			}
+		],
+		feedbacks: [
+			{
+				type: 'mode_color',
+				options: {
+					bg: self.rgb(0,0,255),
+					fg: self.rgb(255,255,255),
+					mode: 'BLACK'
+				}
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Mode',
+		label: 'Clock',
+		bank: {
+			style: 'text',
+			text: 'CLOCK',
+			size: '18',
+			color: self.rgb(255,255,255),
+			bgcolor: self.rgb(0,0,0)
+		},
+		actions: [
+			{
+				action: 'normal_mode'
+			}
+		],
+		feedbacks: [
+			{
+				type: 'mode_color',
+				options: {
+					bg: self.rgb(0,0,255),
+					fg: self.rgb(255,255,255),
+					mode: 'TIMER'
+				}
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Mode',
+		label: 'Countup',
+		bank: {
+			style: 'text',
+			text: 'COUNTUP',
+			size: '18',
+			color: self.rgb(255,255,255),
+			bgcolor: self.rgb(0,0,0)
+		},
+		actions: [
+			{
+				action: 'start_countup'
+			}
+		],
+		feedbacks: [
+			{
+				type: 'mode_color',
+				options: {
+					bg: self.rgb(0,0,255),
+					fg: self.rgb(255,255,255),
+					mode: 'CLOCK'
+				}
+			}
+		]
+	});
+
+	// Show timer
+	presets.push({
+		category: 'Display time',
+		label: 'Hours',
+		bank: {
+			style: 'text',
+			text: '$(label:time_h)',
+			size: 'auto',
+			color: self.rgb(255,255,255),
+			bgcolor: 6619136
+		},
+		actions: [],
+		feedbacks: [
+			{
+				options: {
+					pause_fg: 16777215,
+					pause_bg: 7954688,
+					run_fg: 16777215,
+					run_bg: 26112
+				},
+				type: "state_color",
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Display time',
+		label: 'Minutes',
+		bank: {
+			style: 'text',
+			text: '$(label:time_m)',
+			size: 'auto',
+			color: self.rgb(255,255,255),
+			bgcolor: 6619136
+		},
+		actions: [],
+		feedbacks: [
+			{
+				options: {
+					pause_fg: 16777215,
+					pause_bg: 7954688,
+					run_fg: 16777215,
+					run_bg: 26112
+				},
+				type: "state_color",
+			}
+		]
+	});
+
+	presets.push({
+		category: 'Display time',
+		label: 'Seconds',
+		bank: {
+			style: 'text',
+			text: '$(label:time_s)',
+			size: 'auto',
+			color: self.rgb(255,255,255),
+			bgcolor: 6619136
+		},
+		actions: [],
+		feedbacks: [
+			{
+				options: {
+					pause_fg: 16777215,
+					pause_bg: 7954688,
+					run_fg: 16777215,
+					run_bg: 26112
+				},
+				type: "state_color",
+			}
+		]
+	});
+
+	self.setPresetDefinitions(presets);
+}
+
+
+
 
 instance_skel.extendedBy(instance);
 exports = module.exports = instance;
