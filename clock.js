@@ -1,6 +1,8 @@
 var instance_skel = require('../../instance_skel');
 var debug;
 var log;
+var OSC     = require('osc')
+
 
 function instance(system, id, config) {
 	var self = this;
@@ -10,19 +12,11 @@ function instance(system, id, config) {
 
 	self.actions(); // export actions
 
-	// Example: When this script was committed, a fix needed to be made
-	// this will only be run if you had an instance of an older "version" before.
-	// "version" is calculated out from how many upgradescripts your intance config has run.
-	// So just add a addUpgradeScript when you commit a breaking change to the config, that fixes
-	// the config.
-
-	self.addUpgradeScript(function () {
-		// just an example
-		if (self.config.host !== undefined) {
-			self.config.old_host = self.config.host;
-		}
-	});
-
+	self.feedbackstate = {
+		time: '00:00:00',
+		tally: '',
+		mode: 'NORMAL'
+	};
 	return self;
 }
 
@@ -30,6 +24,7 @@ instance.prototype.updateConfig = function(config) {
 	var self = this;
 
 	self.config = config;
+	self.init_osc();
 };
 instance.prototype.init = function() {
 	var self = this;
@@ -38,6 +33,155 @@ instance.prototype.init = function() {
 
 	debug = self.debug;
 	log = self.log;
+	self.init_osc();
+	self.init_variables();
+};
+
+instance.prototype.init_feedbacks = function() {
+	var self = this;
+
+	var feedbacks = {
+		state_color: {
+			label: 'Change color from state',
+			description: 'Change the colors of a bank according to the timer state',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Normal: Foreground color',
+					id: 'normal_fg',
+					default: self.rgb(255,255,255)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Normal: Background color',
+					id: 'normal_bg',
+					default: self.rgb(255,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Countdown: Foreground color',
+					id: 'ct_fg',
+					default: self.rgb(255,255,255)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Countdown: Background color',
+					id: 'ct_bg',
+					default: self.rgb(255,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Countup: Foreground color',
+					id: 'cu_fg',
+					default: self.rgb(255,255,255)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Countdown: Background color',
+					id: 'cu_bg',
+					default: self.rgb(255,0,0)
+				}
+			]
+		}
+	};
+
+	self.setFeedbackDefinitions(feedbacks);
+};
+
+instance.prototype.init_variables = function() {
+	var self = this;
+
+	var variables = [
+		{
+			label: 'State of timer (NORMAL, COUNTUP, COUNTDOWN, OFF)',
+			name: 'state'
+		},
+		{
+			label: 'Current time of timer (hh:mm:ss)',
+			name: 'time'
+		},
+		{
+			label: 'Current time of timer (hh:mm)',
+			name: 'time_hm'
+		},
+		{
+			label: 'Current time of timer (hours)',
+			name: 'time_h'
+		},
+		{
+			label: 'Current time of timer (minutes)',
+			name: 'time_m'
+		},
+		{
+			label: 'Current time of timer (seconds)',
+			name: 'time_s'
+		},
+		{
+			label: 'Current tally text',
+			name: 'tally'
+		},
+	];
+
+	self.updateState();
+	self.setVariableDefinitions(variables);
+};
+
+instance.prototype.updateState = function() {
+	var self = this;
+	var info = self.feedbackstate.time.split(':');
+
+	self.setVariable('time', self.feedbackstate.time);
+	self.setVariable('time_hm', info[0] + ':' + info[1]);
+	self.setVariable('time_h', info[0]);
+	self.setVariable('time_m', info[1]);
+	self.setVariable('time_s', info[2]);
+
+	self.setVariable('state', self.feedbackstate.state);
+	self.setVariable('tally', self.feedbackstate.tally);
+};
+
+instance.prototype.init_osc = function() {
+	var self = this;
+
+	if (self.listener) {
+		self.listener.close();
+	};
+
+	self.listener = new OSC.UDPPort({
+		localAddress: "0.0.0.0",
+		localPort: self.config.localport,
+		metadata: true
+	});
+
+	self.listener.open();
+
+	self.listener.on("ready", function () {
+		self.ready = true;
+	});
+
+	self.listener.on("message", function (message) {
+		if (message.address.match(/^\/clock\/state/)) {
+			if (message.args.length == 5) {
+				var a = message.args;
+				var mode = a[0].value;
+				if (mode == "0") {
+					self.feedbackstate.state = "NORMAL";
+				};
+				if (mode == "1") {
+					self.feedbackstate.state = "COUNTDOWN";
+				};
+				if (mode == "2") {
+					self.feedbackstate.state = "COUNTUP";
+				};
+				if (mode == "3") {
+					self.feedbackstate.state = "OFF";
+				};
+				self.feedbackstate.time = a[1].value + ":" + a[2].value+ ":" + a[3].value;
+				self.feedbackstate.tally = a[4].value;
+				self.updateState();
+			};
+		};
+	});
 };
 
 // Return config fields for web config
@@ -55,6 +199,14 @@ instance.prototype.config_fields = function () {
 			type: 'textinput',
 			id: 'port',
 			label: 'Target Port',
+			width: 4,
+			regex: self.REGEX_PORT,
+		default: 1245
+		},
+		{
+			type: 'textinput',
+			id: 'localport',
+			label: 'Local Port',
 			width: 4,
 			regex: self.REGEX_PORT,
 		default: 1245
