@@ -1,9 +1,3 @@
-## OSC Generic
-In instaces tab specify the ip and port you want to send. In button actions tab specify the osc path and value.
+## Clock-8001
 
-**Available commands for OSC Generic**
-
-* Send message
-* Send integer
-* Send float
-* Send string
+Companion module for controlling clock-8001 (https://gitlab.com/Depili/clock-8001) stage timers. Provides feedback with variables and button colors.
