@@ -15,7 +15,8 @@ function instance(system, id, config) {
 	self.feedbackstate = {
 		time: '00:00:00',
 		tally: '',
-		mode: 'NORMAL'
+		mode: '0',
+		paused: '0'
 	};
 	return self;
 }
@@ -109,6 +110,36 @@ instance.prototype.init_feedbacks = function() {
 					default: self.rgb(0,0,0)
 				}
 			]
+		},
+		pause_color: {
+			label: 'Change color from pause',
+			description: 'Change the colors of a bank according to the pause state',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Running: Foreground color',
+					id: 'running_fg',
+					default: self.rgb(255,255,255)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Running: Background color',
+					id: 'running_bg',
+					default: self.rgb(255,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Paused: Foreground color',
+					id: 'paused_fg',
+					default: self.rgb(255,255,255)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Paused: Background color',
+					id: 'paused_bg',
+					default: self.rgb(0,0,0)
+				}
+			]
 		}
 	};
 	self.setFeedbackDefinitions(feedbacks);
@@ -117,45 +148,50 @@ instance.prototype.init_feedbacks = function() {
 instance.prototype.feedback = function(feedback, bank) {
 	var self = this;
 	if (feedback.type == 'state_color') {
-		if (self.feedbackstate.state == 'NORMAL') {
+		if (self.feedbackstate.state == '0') {
 			return {
 				color: feedback.options.normal_fg,
 				bgcolor: feedback.options.normal_bg
 			};
-		}
-		if (self.feedbackstate.state == 'COUNTDOWN') {
+		};
+		if (self.feedbackstate.state == '1') {
 			return {
 				color: feedback.options.countdown_fg,
 				bgcolor: feedback.options.countdown_bg
 			};
-		}
-		if (self.feedbackstate.state == 'PAUSED') {
-			return {
-				color: feedback.options.paused_fg,
-				bgcolor: feedback.options.paused_bg
-			};
-		}
-		else if (self.feedbackstate.state == 'COUNTUP') {
+		} else if (self.feedbackstate.state == '2') {
 			return {
 				color: feedback.options.countup_fg,
 				bgcolor: feedback.options.countup_bg
-			}
+			};
 		}
-		if (self.feedbackstate.state == 'OFF') {
+		if (self.feedbackstate.state == '3') {
 			return {
 				color: feedback.options.off_fg,
 				bgcolor: feedback.options.off_bg
 			};
+		};
+	};
+	if (feedback.type == 'pause_color') {
+		if (self.feedbackstate.paused == '1') {
+			return {
+				color: feedback.options.paused_fg,
+				bgcolor: feedback.options.paused_bg
+			};
+		} else {
+			return {
+				color: feedback.options.running_fg,
+				bgcolor: feedback.options.running_bg
+			};
 		}
-
-	}
+	};
 };
 
 instance.prototype.init_variables = function() {
 	var self = this;
 	var variables = [
 		{
-			label: 'State of timer (NORMAL, COUNTUP, COUNTDOWN, PAUSED, OFF)',
+			label: 'State of timer (NORMAL, COUNTUP, COUNTDOWN, OFF)',
 			name: 'state'
 		},
 		{
@@ -182,6 +218,10 @@ instance.prototype.init_variables = function() {
 			label: 'Current tally text',
 			name: 'tally'
 		},
+		{
+			label: "Pause state",
+			name: "paused"
+		}
 	];
 	self.updateState();
 	self.setVariableDefinitions(variables);
@@ -190,13 +230,25 @@ instance.prototype.init_variables = function() {
 instance.prototype.updateState = function() {
 	var self = this;
 	var info = self.feedbackstate.time.split(':');
+	var states = {
+		"0": "NORMAL",
+		"1": "COUNTDOWN",
+		"2": "COUNTUP",
+		"3": "OFF",
+        "4": "PAUSED"
+	}
+	var pause = {
+		"0": "Run\\nning",
+		"1": "Pau\\nsed"
+	}
 	self.setVariable('time', self.feedbackstate.time);
 	self.setVariable('time_hm', info[0] + ':' + info[1]);
 	self.setVariable('time_h', info[0]);
 	self.setVariable('time_m', info[1]);
 	self.setVariable('time_s', info[2]);
-	self.setVariable('state', self.feedbackstate.state);
+	self.setVariable('state', states[self.feedbackstate.state]);
 	self.setVariable('tally', self.feedbackstate.tally);
+	self.setVariable('paused', pause[self.feedbackstate.paused]);
 };
 
 instance.prototype.init_osc = function() {
@@ -215,21 +267,18 @@ instance.prototype.init_osc = function() {
 	});
 	self.listener.on("message", function (message) {
 		if (message.address.match(/^\/clock\/state/)) {
-			if (message.args.length == 5) {
+			if (message.args.length >= 5) {
 				var a = message.args;
-				var states = {
-					"0": "NORMAL",
-					"1": "COUNTDOWN",
-					"2": "COUNTUP",
-					"3": "OFF",
-                    "4": "PAUSED"
-				}
 				var mode = a[0].value;
-				self.feedbackstate.state = states[mode];
+				self.feedbackstate.state = mode;
 				self.feedbackstate.time = a[1].value + ":" + a[2].value+ ":" + a[3].value;
 				self.feedbackstate.tally = decodeURIComponent(escape(a[4].value));
 				self.updateState();
 				self.checkFeedbacks('state_color');
+			};
+			if (message.args.length == 6) {
+				self.feedbackstate.paused = message.args[5].value;
+				self.checkFeedbacks('pause_color');
 			};
 		};
 	});
@@ -268,6 +317,9 @@ instance.prototype.config_fields = function () {
 // When module gets deleted
 instance.prototype.destroy = function() {
 	var self = this;
+	if (self.listener) {
+		self.listener.close();
+	};
 	debug("destroy");
 };
 
@@ -895,18 +947,12 @@ instance.prototype.init_presets = function (updates) {
 		feedbacks: [
 			{
 				options: {
-					normal_fg: self.rgb(255,128,0),
-					normal_bg: self.rgb(0,0,0),
+					running_fg: self.rgb(255,128,0),
+					running_bg: self.rgb(0,0,0),
 					paused_fg: self.rgb(255,255,255),
 					paused_bg: self.rgb(0,0,255),
-					countdown_fg: self.rgb(255,128,0),
-					countdown_bg: self.rgb(0,0,0),
-					countup_fg: self.rgb(255,128,0),
-					countup_bg: self.rgb(0,0,0),
-					off_fg: self.rgb(255,128,0),
-					off_bg: self.rgb(0,0,0)
 				},
-				type: 'state_color'
+				type: 'pause_color'
 			}
 		]
 	});
@@ -928,18 +974,12 @@ instance.prototype.init_presets = function (updates) {
 		feedbacks: [
 			{
 				options: {
-					normal_fg: self.rgb(255,128,0),
-					normal_bg: self.rgb(0,0,0),
-					paused_fg: self.rgb(255,255,255),
-					paused_bg: self.rgb(0,0,255),
-					countdown_fg: self.rgb(255,128,0),
-					countdown_bg: self.rgb(0,0,0),
-					countup_fg: self.rgb(255,128,0),
-					countup_bg: self.rgb(0,0,0),
-					off_fg: self.rgb(255,128,0),
-					off_bg: self.rgb(0,0,0)
+					paused_fg: self.rgb(255,128,0),
+					paused_bg: self.rgb(0,0,0),
+					running_fg: self.rgb(255,255,255),
+					running_bg: self.rgb(0,0,255),
 				},
-				type: 'state_color'
+				type: 'pause_color'
 			}
 		]
 	});
@@ -1089,6 +1129,30 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
+	presets.push({
+		category: 'Display time',
+		label: 'Pause status',
+		bank: {
+			style: 'text',
+			text: '$(label:paused)',
+			size: 'auto',
+			color: self.rgb(255,255,255),
+			bgcolor: 6619136
+		},
+		actions: [],
+		feedbacks: [
+			{
+				options: {
+					running_fg: self.rgb(255,128,0),
+					running_bg: self.rgb(0,0,0),
+					paused_fg: self.rgb(255,255,255),
+					paused_bg: self.rgb(0,0,255),
+				},
+				type: "pause_color",
+			}
+		]
+	});
+
 	self.setPresetDefinitions(presets);
 }
 
