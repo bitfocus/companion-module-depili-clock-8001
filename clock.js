@@ -62,15 +62,27 @@ instance.prototype.init_feedbacks = function() {
 				},
 				{
 					type: 'colorpicker',
-					label: 'Count down: Foreground color',
+					label: 'Countdown: Foreground color',
 					id: 'countdown_fg',
 					default: self.rgb(255,255,255)
 				},
 				{
 					type: 'colorpicker',
-					label: 'Count down: Background color',
+					label: 'Countdown: Background color',
 					id: 'countdown_bg',
 					default: self.rgb(255,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Paused countdown: Foreground color',
+					id: 'paused_fg',
+					default: self.rgb(128,128,128)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Paused Countdown: Background color',
+					id: 'paused_bg',
+					default: self.rgb(128,0,0)
 				},
 				{
 					type: 'colorpicker',
@@ -117,6 +129,12 @@ instance.prototype.feedback = function(feedback, bank) {
 				bgcolor: feedback.options.countdown_bg
 			};
 		}
+		if (self.feedbackstate.state == 'PAUSED') {
+			return {
+				color: feedback.options.paused_fg,
+				bgcolor: feedback.options.paused_bg
+			};
+		}
 		else if (self.feedbackstate.state == 'COUNTUP') {
 			return {
 				color: feedback.options.countup_fg,
@@ -137,7 +155,7 @@ instance.prototype.init_variables = function() {
 	var self = this;
 	var variables = [
 		{
-			label: 'State of timer (NORMAL, COUNTUP, COUNTDOWN, OFF)',
+			label: 'State of timer (NORMAL, COUNTUP, COUNTDOWN, PAUSED, OFF)',
 			name: 'state'
 		},
 		{
@@ -203,7 +221,8 @@ instance.prototype.init_osc = function() {
 					"0": "NORMAL",
 					"1": "COUNTDOWN",
 					"2": "COUNTUP",
-					"3": "OFF"
+					"3": "OFF",
+                    "4": "PAUSED"
 				}
 				var mode = a[0].value;
 				self.feedbackstate.state = states[mode];
@@ -267,6 +286,16 @@ instance.prototype.actions = function(system) {
 		},
 		'start_countup': {
 			label: 'Start counting up',
+			options: [
+			]
+		},
+		'pause_countdown': {
+			label: 'Pause countdown(s)',
+			options: [
+			]
+		},
+		'resume_countdown': {
+			label: 'Resume countdown(s)',
 			options: [
 			]
 		},
@@ -430,6 +459,12 @@ instance.prototype.action = function(action) {
 	}
 	if (action.action == 'start_countup') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countup/start", [])
+	}
+	if (action.action == 'pause_countdown') {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/pause", [])
+	}
+	if (action.action == 'resume_countdown') {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/resume", [])
 	}
 	if (action.action == 'start_countdown') {
 		hours = parseInt(action.options.hours)
@@ -768,8 +803,10 @@ instance.prototype.init_presets = function (updates) {
 					countdown_bg: self.rgb(0,0,0),
 					countup_fg: self.rgb(255,128,0),
 					countup_bg: self.rgb(0,0,0),
-					off_bg: self.rgb(0,0,255),
-					off_fg: self.rgb(255,255,255)
+					paused_fg: self.rgb(255,128,0),
+					paused_bg: self.rgb(0,0,0),
+					off_fg: self.rgb(255,255,255),
+					off_bg: self.rgb(0,0,255)
 				}
 			}
 		]
@@ -793,8 +830,10 @@ instance.prototype.init_presets = function (updates) {
 			{
 				type: 'state_color',
 				options: {
-					normal_bg: self.rgb(0,0,255),
 					normal_fg: self.rgb(255,255,255),
+					normal_bg: self.rgb(0,0,255),
+					paused_fg: self.rgb(255,128,0),
+					paused_bg: self.rgb(0,0,0),
 					countdown_fg: self.rgb(255,128,0),
 					countdown_bg: self.rgb(0,0,0),
 					countup_fg: self.rgb(255,128,0),
@@ -825,10 +864,78 @@ instance.prototype.init_presets = function (updates) {
 				options: {
 					normal_fg: self.rgb(255,128,0),
 					normal_bg: self.rgb(0,0,0),
+					paused_fg: self.rgb(255,128,0),
+					paused_bg: self.rgb(0,0,0),
 					countdown_fg: self.rgb(255,128,0),
 					countdown_bg: self.rgb(0,0,0),
 					countup_bg: self.rgb(0,0,255),
 					countup_fg: self.rgb(255,255,255),
+					off_fg: self.rgb(255,128,0),
+					off_bg: self.rgb(0,0,0)
+				},
+				type: 'state_color'
+			}
+		]
+	});
+	presets.push({
+		category: 'Mode',
+		label: 'Pause countdown(s)',
+		bank: {
+			style: 'text',
+			text: 'Pause',
+			size: '18',
+			color: self.rgb(255,128,0),
+			bgcolor: self.rgb(0,0,0)
+		},
+		actions: [
+			{
+				action: 'pause_countdown'
+			}
+		],
+		feedbacks: [
+			{
+				options: {
+					normal_fg: self.rgb(255,128,0),
+					normal_bg: self.rgb(0,0,0),
+					paused_fg: self.rgb(255,255,255),
+					paused_bg: self.rgb(0,0,255),
+					countdown_fg: self.rgb(255,128,0),
+					countdown_bg: self.rgb(0,0,0),
+					countup_fg: self.rgb(255,128,0),
+					countup_bg: self.rgb(0,0,0),
+					off_fg: self.rgb(255,128,0),
+					off_bg: self.rgb(0,0,0)
+				},
+				type: 'state_color'
+			}
+		]
+	});
+	presets.push({
+		category: 'Mode',
+		label: 'Resume countdown(s)',
+		bank: {
+			style: 'text',
+			text: 'Resume',
+			size: '18',
+			color: self.rgb(255,128,0),
+			bgcolor: self.rgb(0,0,0)
+		},
+		actions: [
+			{
+				action: 'resume_countdown'
+			}
+		],
+		feedbacks: [
+			{
+				options: {
+					normal_fg: self.rgb(255,128,0),
+					normal_bg: self.rgb(0,0,0),
+					paused_fg: self.rgb(255,255,255),
+					paused_bg: self.rgb(0,0,255),
+					countdown_fg: self.rgb(255,128,0),
+					countdown_bg: self.rgb(0,0,0),
+					countup_fg: self.rgb(255,128,0),
+					countup_bg: self.rgb(0,0,0),
 					off_fg: self.rgb(255,128,0),
 					off_bg: self.rgb(0,0,0)
 				},
@@ -857,6 +964,8 @@ instance.prototype.init_presets = function (updates) {
 					countup_bg: 7954688,
 					countdown_fg: 16777215,
 					countdown_bg: 26112,
+					paused_fg: 16777215,
+					paused_bg: 7954688,
 					off_fg: self.rgb(0,0,0),
 					off_bg: self.rgb(0,0,0)
 				},
@@ -884,6 +993,8 @@ instance.prototype.init_presets = function (updates) {
 					countup_bg: 7954688,
 					countdown_fg: 16777215,
 					countdown_bg: 26112,
+					paused_fg: 16777215,
+					paused_bg: 7954688,
 					off_fg: self.rgb(0,0,0),
 					off_bg: self.rgb(0,0,0)
 				},
@@ -911,6 +1022,8 @@ instance.prototype.init_presets = function (updates) {
 					countup_bg: 7954688,
 					countdown_fg: 16777215,
 					countdown_bg: 26112,
+					paused_fg: 16777215,
+					paused_bg: 7954688,
 					off_fg: self.rgb(0,0,0),
 					off_bg: self.rgb(0,0,0)
 				},
@@ -938,6 +1051,8 @@ instance.prototype.init_presets = function (updates) {
 					countup_bg: 7954688,
 					countdown_fg: 16777215,
 					countdown_bg: 26112,
+					paused_fg: 16777215,
+					paused_bg: 7954688,
 					off_fg: self.rgb(0,0,0),
 					off_bg: self.rgb(0,0,0)
 				},
@@ -965,6 +1080,8 @@ instance.prototype.init_presets = function (updates) {
 					countup_bg: 7954688,
 					countdown_fg: 16777215,
 					countdown_bg: 26112,
+					paused_fg: 16777215,
+					paused_bg: 7954688,
 					off_fg: self.rgb(64,64,64),
 					off_bg: self.rgb(0,0,0)
 				},
