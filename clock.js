@@ -331,6 +331,16 @@ instance.prototype.actions = function(system) {
 			options: [
 			]
 		},
+		'seconds_off': {
+			label: 'Hide seconds number',
+			options: [
+			]
+		},
+		'seconds_on': {
+			label: 'Show seconds number',
+			options: [
+			]
+		},
 		'kill_display': {
 			label: 'Display off',
 			options: [
@@ -508,6 +518,12 @@ instance.prototype.action = function(action) {
 	}
 	if (action.action == 'normal_mode') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/normal", [])
+	}
+	if (action.action == 'seconds_off') {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/seconds/off", [])
+	}
+	if (action.action == 'seconds_on') {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/seconds/on", [])
 	}
 	if (action.action == 'start_countup') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countup/start", [])
@@ -983,6 +999,39 @@ instance.prototype.init_presets = function (updates) {
 			}
 		]
 	});
+	presets.push({
+		category: 'Mode',
+		label: 'Hide seconds',
+		bank: {
+			style: 'text',
+			text: 'Hide secs',
+			size: '18',
+			color: self.rgb(255,128,0),
+			bgcolor: self.rgb(0,0,0)
+		},
+		actions: [
+			{
+				action: 'seconds_off'
+			}
+		]
+	});
+	presets.push({
+		category: 'Mode',
+		label: 'Show seconds',
+		bank: {
+			style: 'text',
+			text: 'Show secs',
+			size: '18',
+			color: self.rgb(255,128,0),
+			bgcolor: self.rgb(0,0,0)
+		},
+		actions: [
+			{
+				action: 'seconds_on'
+			}
+		]
+	});
+
 	// Show timer
 	presets.push({
 		category: 'Display time',
