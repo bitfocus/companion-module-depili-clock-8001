@@ -272,7 +272,7 @@ instance.prototype.init_osc = function() {
 				var mode = a[0].value;
 				self.feedbackstate.state = mode;
 				self.feedbackstate.time = a[1].value + ":" + a[2].value+ ":" + a[3].value;
-				self.feedbackstate.tally = decodeURIComponent(escape(a[4].value));
+				self.feedbackstate.tally = a[4].value;
 				self.updateState();
 				self.checkFeedbacks('state_color');
 			};
