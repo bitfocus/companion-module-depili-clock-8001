@@ -326,6 +326,12 @@ instance.prototype.destroy = function() {
 instance.prototype.actions = function(system) {
 	var self = this;
 	self.system.emit('instance_actions', self.id, {
+		'sync_time': {
+			label: "Sync clock time with the companion computer",
+			options: [
+
+			]
+		},
 		'normal_mode': {
 			label: 'Display current time',
 			options: [
@@ -513,6 +519,11 @@ instance.prototype.actions = function(system) {
 
 instance.prototype.action = function(action) {
 	var self = this;
+	if (action.action == "sync_time") {
+		var today = new Date();
+		var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/time/set", [{type: "s", value: time}])
+	}
 	if (action.action == 'kill_display') {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/kill", [])
 	}
@@ -1200,6 +1211,23 @@ instance.prototype.init_presets = function (updates) {
 				type: "pause_color",
 			}
 		]
+	});
+	presets.push({
+		category: 'Sync',
+		label: 'Sync time',
+		bank: {
+			style: 'text',
+			text: 'Sync clock',
+			size: 'auto',
+			color: self.rgb(255,255,255),
+			bgcolor: 6619136
+		},
+		actions: [
+			{
+				action: "sync_time"
+			}
+		],
+		feedbacks: []
 	});
 
 	self.setPresetDefinitions(presets);
