@@ -3,7 +3,8 @@
 	"version": "4.1.0",
 	"api_version": "1.0.0",
 	"keywords": [
-		"Timing"
+		"Timing",
+		"Clock"
 	],
 	"manufacturer": "Depili",
 	"product": "Clock-8001",
