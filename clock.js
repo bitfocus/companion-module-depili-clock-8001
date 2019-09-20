@@ -522,6 +522,24 @@ instance.prototype.actions = function(system) {
 	});
 }
 
+instance.prototype.parse_time = function(h, m, s) {
+	hours = parseInt(h)
+	if (isNaN(hours)) {
+		hours = 0
+	}
+	mins = parseInt(m)
+	if (isNaN(mins)) {
+		mins = 0
+	}
+	mins = mins + hours * 60
+	secs = parseInt(s)
+	if (isNaN(secs)) {
+		secs = 0
+	}
+	secs = secs + mins * 60
+	return secs
+}
+
 instance.prototype.action = function(action) {
 	var self = this;
 	if (action.action == "sync_time") {
@@ -551,9 +569,7 @@ instance.prototype.action = function(action) {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/resume", [])
 	}
 	if (action.action == 'start_countdown') {
-		hours = parseInt(action.options.hours)
-		mins = parseInt(action.options.mins) + hours * 60
-		secs = parseInt(action.options.secs) + mins * 60
+		secs = self.parse_time(action.options.hours, action.options.mins, action.options.secs)
 		var bol = {
 			type: "i",
 			value: secs
@@ -561,9 +577,7 @@ instance.prototype.action = function(action) {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/start", [ bol ]);
 	}
 	if (action.action == 'start_countdown2') {
-		hours = parseInt(action.options.hours)
-		mins = parseInt(action.options.mins) + hours * 60
-		secs = parseInt(action.options.secs) + mins * 60
+		secs = self.parse_time(action.options.hours, action.options.mins, action.options.secs)
 		var bol = {
 			type: "i",
 			value: secs
@@ -571,9 +585,7 @@ instance.prototype.action = function(action) {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown2/start", [ bol ]);
 	}
 	if (action.action == 'modify_countdown') {
-		hours = parseInt(action.options.hours)
-		mins = parseInt(action.options.mins) + hours * 60
-		secs = parseInt(action.options.secs) + mins * 60
+		secs = self.parse_time(action.options.hours, action.options.mins, action.options.secs)
 		var bol = {
 			type: "i",
 			value: secs
@@ -581,9 +593,7 @@ instance.prototype.action = function(action) {
 		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/countdown/modify", [ bol ]);
 	}
 	if (action.action == 'modify_countdown2') {
-		hours = parseInt(action.options.hours)
-		mins = parseInt(action.options.mins) + hours * 60
-		secs = parseInt(action.options.secs) + mins * 60
+		secs = self.parse_time(action.options.hours, action.options.mins, action.options.secs)
 		var bol = {
 			type: "i",
 			value: secs
