@@ -241,8 +241,13 @@ instance.prototype.updateState = function() {
 		"0": "Run\\nning",
 		"1": "Pau\\nsed"
 	}
-	self.setVariable('time', self.feedbackstate.time);
-	self.setVariable('time_hm', info[0] + ':' + info[1]);
+	if (info[0].length == 0) {
+		self.setVariable('time', info[1] + ':' + info[2]);
+		self.setVariable('time_hm', '00:' + info[1]);
+	} else {
+		self.setVariable('time', self.feedbackstate.time);
+		self.setVariable('time_hm', info[0] + ':' + info[1]);
+	}
 	self.setVariable('time_h', info[0]);
 	self.setVariable('time_m', info[1]);
 	self.setVariable('time_s', info[2]);
