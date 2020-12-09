@@ -331,6 +331,241 @@ instance.prototype.destroy = function() {
 instance.prototype.actions = function(system) {
 	var self = this;
 	self.system.emit('instance_actions', self.id, {
+		'start_cd_v4': {
+			label: 'Start a countdown timer V4',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Timer number',
+					id: 'timer',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				},
+				{
+					type: 'textinput',
+					label: 'Timer (seconds)',
+					id: 'secs',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				},
+				{
+					type: 'textinput',
+					label: 'Timer (minutes)',
+					id: 'mins',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				},
+				{
+					type: 'textinput',
+					label: 'Timer (hours)',
+					id: 'hours',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				}
+			]
+		},
+		'start_countup_v4': {
+			label: 'Start a count up timer V4',
+			options: [
+							{
+					type: 'textinput',
+					label: 'Timer number',
+					id: 'timer',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				},
+				{
+					type: 'textinput',
+					label: 'Timer (seconds)',
+					id: 'secs',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				},
+				{
+					type: 'textinput',
+					label: 'Timer (minutes)',
+					id: 'mins',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				},
+				{
+					type: 'textinput',
+					label: 'Timer (hours)',
+					id: 'hours',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				}
+			]
+		},
+		'timer_modify_v4': {
+			label: 'Modify a running timer V4',
+			options: [
+							{
+					type: 'textinput',
+					label: 'Timer number',
+					id: 'timer',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				},
+				{
+					type: 'textinput',
+					label: 'Timer (seconds)',
+					id: 'secs',
+					default: 0,
+					regex: self.REGEX_SIGNED_NUMBER
+				},
+				{
+					type: 'textinput',
+					label: 'Timer (minutes)',
+					id: 'mins',
+					default: 1,
+					regex: self.REGEX_SIGNED_NUMBER
+				},
+				{
+					type: 'textinput',
+					label: 'Timer (hours)',
+					id: 'hours',
+					default: 0,
+					regex: self.REGEX_SIGNED_NUMBER
+				}
+			]
+		},
+		'timer_stop_v4': {
+			label: 'Stop a running timer V4',
+			options: [
+							{
+					type: 'textinput',
+					label: 'Timer number',
+					id: 'timer',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				}
+			]
+		},
+		'source_hide_v4': {
+			label: 'Hide a time source V4',
+			options: [
+							{
+					type: 'textinput',
+					label: 'Source number',
+					id: 'source',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				}
+			]
+		},
+		'source_show_v4': {
+			label: 'Show a time source V4',
+			options: [
+							{
+					type: 'textinput',
+					label: 'Source number',
+					id: 'source',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				}
+			]
+		},
+		'background_v4': {
+			label: 'Change background V4',
+			options: [
+							{
+					type: 'textinput',
+					label: 'Background number',
+					id: 'bg',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				}
+			]
+		},
+		'info_v4': {
+			label: "Show clock info overlay V4",
+			options: [
+				{
+					type: 'textinput',
+					label: 'Duration (seconds)',
+					id: 'duration',
+					width: 5,
+					default: 30,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				}
+			]
+		},
+		'send_text_v4': {
+			label: 'Send text V4',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Text',
+					id: 'text',
+					width: 30,
+					default: 'stop'
+				},
+				{
+					type: 'textinput',
+					label: 'Duration (seconds)',
+					id: 'duration',
+					default: 60,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				},
+				{
+					type: 'textinput',
+					label: 'Red',
+					id: 'red',
+					default: 255,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				},
+				{
+					type: 'textinput',
+					label: 'Green',
+					id: 'green',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				},
+				{
+					type: 'textinput',
+					label: 'Blue',
+					id: 'blue',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				},
+				{
+					type: 'textinput',
+					label: 'Alpha',
+					id: 'alpha',
+					default: 255,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				},
+				{
+					type: 'textinput',
+					label: 'BG Red',
+					id: 'bg_red',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				},
+				{
+					type: 'textinput',
+					label: 'BG Green',
+					id: 'bg_green',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				},
+				{
+					type: 'textinput',
+					label: 'BG Blue',
+					id: 'bg_blue',
+					default: 0,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				},
+				{
+					type: 'textinput',
+					label: 'BG Alpha',
+					id: 'bg_alpha',
+					default: 64,
+					regex: self.REGEX_UNSIGNED_INTEGER
+				},
+			]
+		},
 		'sync_time': {
 			label: "Sync clock time with the companion computer",
 			options: [
@@ -372,9 +607,16 @@ instance.prototype.actions = function(system) {
 			options: [
 			]
 		},
-		'start_countdown': {
-			label: 'Primary countdown: start',
+		'start_countdown_v4': {
+			label: 'Start a countdown timer',
 			options: [
+							{
+					type: 'textinput',
+					label: 'Timer number',
+					id: 'secs',
+					default: 1,
+					regex: self.REGEX_UNSIGNED_NUMBER
+				},
 				{
 					type: 'textinput',
 					label: 'Timer (seconds)',
@@ -542,6 +784,100 @@ instance.prototype.parse_time = function(h, m, s) {
 
 instance.prototype.action = function(action) {
 	var self = this;
+	if (action.action == "start_cd_v4") {
+		secs = self.parse_time(action.options.hours, action.options.mins, action.options.secs)
+		var bol = {
+			type: "i",
+			value: secs
+		};
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/timer/"+action.options.timer+"/countdown", [ bol ]);
+	}
+	if (action.action == "start_countup_v4") {
+		secs = self.parse_time(action.options.hours, action.options.mins, action.options.secs)
+		var bol = {
+			type: "i",
+			value: secs
+		};
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/timer/"+action.options.timer+"/countup", [ bol ]);
+	}
+	if (action.action == "timer_modify_v4") {
+		secs = self.parse_time(action.options.hours, action.options.mins, action.options.secs)
+		var bol = {
+			type: "i",
+			value: secs
+		};
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/timer/"+action.options.timer+"/modify", [ bol ]);
+	}
+	if (action.action == "timer_stop_v4") {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/timer/"+action.options.timer+"/stop", []);
+	}
+	if (action.action == "source_hide_v4") {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/source/"+action.options.source+"/hide", []);
+	}
+	if (action.action == "source_show_v4") {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/source/"+action.options.source+"/show", []);
+	}
+	if (action.action == "background_v4") {
+		var bol = {
+			type: "i",
+			value: action.options.bg
+		};
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/background", [ bol ]);
+	}
+	if (action.action == "info_v4") {
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/info", [{type: "i", value: action.options.duration}]);
+	}
+	if (action.action == "send_text_v4") {
+		var red = {
+			type: "i",
+			value: action.options.red
+		};
+		var green = {
+			type: "i",
+			value: action.options.green
+		};
+		var blue = {
+			type: "i",
+			value: action.options.blue
+		};
+		var alpha = {
+			type: "i",
+			value: action.options.alpha
+		}
+		var bg_red = {
+			type: "i",
+			value: action.options.bg_red
+		};
+		var bg_green = {
+			type: "i",
+			value: action.options.bg_green
+		};
+		var bg_blue = {
+			type: "i",
+			value: action.options.bg_blue
+		};
+		var bg_alpha = {
+			type: "i",
+			value: action.options.bg_alpha
+		}
+		var duration = {
+			type: "i",
+			value: action.options.duration
+		}
+		var text = {
+			type: "s",
+			value: "" + action.options.text
+		};
+		var payload = [
+			red, green, blue, alpha,
+			bg_red, bg_green, bg_blue, bg_alpha,
+			duration, text
+		]
+		self.system.emit('osc_send', self.config.host, self.config.port, "/clock/text", payload);
+
+	}
+
+
 	if (action.action == "sync_time") {
 		var today = new Date();
 		var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
