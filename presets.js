@@ -39,6 +39,7 @@ exports.getPresets = function getPresets() {
           },
         ],
       });
+
       presets.push({
         category: `Timer ${i}`,
         label: 'Set 10 min countdown',
@@ -61,6 +62,7 @@ exports.getPresets = function getPresets() {
           },
         ],
       });
+
       presets.push({
         category: `Timer ${i}`,
         label: 'Set 30 min countdown',
@@ -83,6 +85,7 @@ exports.getPresets = function getPresets() {
           },
         ],
       });
+
       presets.push({
         category: `Timer ${i}`,
         label: 'Start count up',
@@ -102,6 +105,47 @@ exports.getPresets = function getPresets() {
           },
         ],
       });
+
+      presets.push({
+        category: `Timer ${i}`,
+        label: 'Pause timer',
+        bank: {
+          style: 'text',
+          text: 'Pause',
+          size: '18',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [
+          {
+            action: 'timer_pause_v4',
+            options: {
+              timer: `${i}`,
+            },
+          },
+        ],
+      });
+
+      presets.push({
+        category: `Timer ${i}`,
+        label: 'Resume timer',
+        bank: {
+          style: 'text',
+          text: 'Resume',
+          size: '18',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [
+          {
+            action: 'timer_resume_v4',
+            options: {
+              timer: `${i}`,
+            },
+          },
+        ],
+      });
+
       presets.push({
         category: `Timer ${i}`,
         label: 'Stop timer',
@@ -144,6 +188,7 @@ exports.getPresets = function getPresets() {
           },
         ],
       });
+
       presets.push({
         category: `Timer ${i}`,
         label: 'Remove 1 minute',
@@ -161,6 +206,52 @@ exports.getPresets = function getPresets() {
               timer: `${i}`,
               secs: '0',
               mins: '-1',
+              hours: '0',
+            },
+          },
+        ],
+      });
+
+      presets.push({
+        category: `Timer ${i}`,
+        label: 'Add 2 seconds',
+        bank: {
+          style: 'text',
+          text: '+2\\nsec',
+          size: '18',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [
+          {
+            action: 'timer_modify_v4',
+            options: {
+              timer: `${i}`,
+              secs: '2',
+              mins: '0',
+              hours: '0',
+            },
+          },
+        ],
+      });
+
+      presets.push({
+        category: `Timer ${i}`,
+        label: 'Remove 2 seconds',
+        bank: {
+          style: 'text',
+          text: '-2\\nsec',
+          size: '18',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [
+          {
+            action: 'timer_modify_v4',
+            options: {
+              timer: `${i}`,
+              secs: '-2',
+              mins: '0',
               hours: '0',
             },
           },
@@ -210,6 +301,98 @@ exports.getPresets = function getPresets() {
       });
     }
     // End of source preset loop
+
+    presets.push({
+      category: 'Sources',
+      label: 'Hide all sources',
+      bank: {
+        style: 'text',
+        text: 'Hide\\nall',
+        size: '18',
+        color: '16777215',
+        bgcolor: this.rgb(0, 0, 255),
+      },
+      actions: [
+      {
+        action: 'hide_sources_v4',
+        options: {},
+      },
+      ],
+    });
+
+    presets.push({
+      category: 'Sources',
+      label: 'Show all sources',
+      bank: {
+        style: 'text',
+        text: 'Show\\nall',
+        size: '18',
+        color: '16777215',
+        bgcolor: this.rgb(0, 0, 255),
+      },
+      actions: [
+      {
+        action: 'show_sources_v4',
+        options: {},
+      },
+      ],
+    });
+
+    // Misc commands
+    presets.push({
+      category: 'Misc',
+      label: 'Show info overlay',
+      bank: {
+        style: 'text',
+        text: 'Info',
+        size: '18',
+        color: '16777215',
+        bgcolor: this.rgb(0, 0, 255),
+      },
+      actions: [
+      {
+        action: 'info_v4',
+        options: {},
+      },
+      ],
+    });
+
+    presets.push({
+      category: 'Misc',
+      label: 'Pause all timers',
+      bank: {
+        style: 'text',
+        text: 'Pause\\nall',
+        size: '18',
+        color: '16777215',
+        bgcolor: this.rgb(0, 0, 255),
+      },
+      actions: [
+      {
+        action: 'pause_timers',
+        options: {},
+      },
+      ],
+    });
+
+   presets.push({
+      category: 'Misc',
+      label: 'Pause all timers',
+      bank: {
+        style: 'text',
+        text: 'Resume\\nall',
+        size: '18',
+        color: '16777215',
+        bgcolor: this.rgb(0, 0, 255),
+      },
+      actions: [
+      {
+        action: 'resume_timers',
+        options: {},
+      },
+      ],
+    });
+
   }
   // End of V4 presets
 

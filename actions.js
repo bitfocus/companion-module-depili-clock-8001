@@ -1,142 +1,157 @@
 exports.getActions = function getActions() {
   const actions = [];
+  const timerOption = {
+    type: 'textinput',
+    label: 'Timer number',
+    id: 'timer',
+    default: 1,
+    regex: this.REGEX_UNSIGNED_NUMBER,
+  };
+  const timerTimeOptions = [
+    timerOption,
+    {
+      type: 'textinput',
+      label: 'Timer (seconds)',
+      id: 'secs',
+      default: 0,
+      regex: this.REGEX_UNSIGNED_NUMBER,
+    },
+    {
+      type: 'textinput',
+      label: 'Timer (minutes)',
+      id: 'mins',
+      default: 1,
+      regex: this.REGEX_UNSIGNED_NUMBER,
+    },
+    {
+      type: 'textinput',
+      label: 'Timer (hours)',
+      id: 'hours',
+      default: 0,
+      regex: this.REGEX_UNSIGNED_NUMBER,
+    },
+  ];
+  const sourceOption = {
+    type: 'textinput',
+    label: 'Source number',
+    id: 'source',
+    default: 1,
+    regex: this.REGEX_UNSIGNED_NUMBER,
+  };
   actions.length = 0;
 
   if (this.config.version === '4' || this.config.version === 'mixed') {
     // V4 only actions
+
+    // Timers
     actions.start_countdown_v4 = {
       label: 'Start a countdown timer V4',
-      options: [
-        {
-          type: 'textinput',
-          label: 'Timer number',
-          id: 'timer',
-          default: 1,
-          regex: this.REGEX_UNSIGNED_NUMBER,
-        },
-        {
-          type: 'textinput',
-          label: 'Timer (seconds)',
-          id: 'secs',
-          default: 0,
-          regex: this.REGEX_UNSIGNED_NUMBER,
-        },
-        {
-          type: 'textinput',
-          label: 'Timer (minutes)',
-          id: 'mins',
-          default: 1,
-          regex: this.REGEX_UNSIGNED_NUMBER,
-        },
-        {
-          type: 'textinput',
-          label: 'Timer (hours)',
-          id: 'hours',
-          default: 0,
-          regex: this.REGEX_UNSIGNED_NUMBER,
-        },
-      ],
+      options: timerTimeOptions,
     };
-    actions.start_countup_v4 = {
-      label: 'Start a count up timer V4',
+
+    actions.target_countdown_v4 = {
+      label: 'Start a countdown to a time V4',
       options: [
+        timerOption,
         {
           type: 'textinput',
-          label: 'Timer number',
-          id: 'timer',
-          default: 1,
-          regex: this.REGEX_UNSIGNED_NUMBER,
-        },
-        {
-          type: 'textinput',
-          label: 'Timer (seconds)',
-          id: 'secs',
-          default: 0,
-          regex: this.REGEX_UNSIGNED_NUMBER,
-        },
-        {
-          type: 'textinput',
-          label: 'Timer (minutes)',
-          id: 'mins',
-          default: 1,
-          regex: this.REGEX_UNSIGNED_NUMBER,
-        },
-        {
-          type: 'textinput',
-          label: 'Timer (hours)',
-          id: 'hours',
-          default: 0,
-          regex: this.REGEX_UNSIGNED_NUMBER,
-        },
-      ],
-    };
-    actions.timer_modify_v4 = {
-      label: 'Modify a running timer V4',
-      options: [
-        {
-          type: 'textinput',
-          label: 'Timer number',
-          id: 'timer',
-          default: 1,
-          regex: this.REGEX_UNSIGNED_NUMBER,
-        },
-        {
-          type: 'textinput',
-          label: 'Timer (seconds)',
-          id: 'secs',
-          default: 0,
-          regex: this.REGEX_SIGNED_NUMBER,
-        },
-        {
-          type: 'textinput',
-          label: 'Timer (minutes)',
-          id: 'mins',
-          default: 1,
-          regex: this.REGEX_SIGNED_NUMBER,
-        },
-        {
-          type: 'textinput',
-          label: 'Timer (hours)',
-          id: 'hours',
-          default: 0,
-          regex: this.REGEX_SIGNED_NUMBER,
-        },
-      ],
-    };
-    actions.timer_stop_v4 = {
-      label: 'Stop a running timer V4',
-      options: [
-        {
-          type: 'textinput',
-          label: 'Timer number',
-          id: 'timer',
-          default: 1,
-          regex: this.REGEX_UNSIGNED_NUMBER,
+          label: 'Target time (HH:MM:SS)',
+          id: 'target',
         },
       ],
     };
 
-    actions.source_hide_v4 = {
-      label: 'Hide a time source V4',
+    actions.start_countup_v4 = {
+      label: 'Start a count up timer V4',
+      options: timerTimeOptions,
+    };
+
+    actions.target_countup_v4 = {
+      label: 'Start counting up from a time V4',
       options: [
+        timerOption,
         {
           type: 'textinput',
-          label: 'Source number',
-          id: 'source',
-          default: 1,
-          regex: this.REGEX_UNSIGNED_NUMBER,
+          label: 'Target time (HH:MM:SS)',
+          id: 'target',
         },
       ],
     };
+
+    actions.timer_modify_v4 = {
+      label: 'Modify a running timer V4',
+      options: timerTimeOptions,
+    };
+
+    actions.timer_pause_v4 = {
+      label: 'Pause a running timer V4',
+      options: [
+        timerOption,
+      ],
+    };
+
+    actions.timer_resume_v4 = {
+      label: 'Resume a paused timer V4',
+      options: [
+        timerOption,
+      ],
+    };
+
+    actions.timer_stop_v4 = {
+      label: 'Stop a running timer V4',
+      options: [
+          timerOption,
+      ],
+    };
+
+    // Source commands
+    actions.source_hide_v4 = {
+      label: 'Hide a time source V4',
+      options: [
+        sourceOption,
+      ],
+    };
+
     actions.source_show_v4 = {
       label: 'Show a time source V4',
       options: [
+        sourceOption,
+      ],
+    };
+
+    actions.source_title_v4 = {
+      label: 'Set source title V4',
+      options: [
+        sourceOption,
         {
           type: 'textinput',
-          label: 'Source number',
-          id: 'source',
-          default: 1,
-          regex: this.REGEX_UNSIGNED_NUMBER,
+          label: 'Title',
+          id: 'title',
+        },
+      ],
+    };
+
+    actions.hide_sources_v4 = {
+      label: 'Hide all sources V4',
+      options: [],
+    };
+
+    actions.show_sources_v4 = {
+      label: 'Show all sources V4',
+      options: [],
+    };
+
+    // Misc commands
+    actions.info_v4 = {
+      label: 'Show clock info overlay V4',
+      options: [
+        {
+          type: 'textinput',
+          label: 'Duration (seconds)',
+          id: 'duration',
+          width: 5,
+          default: 30,
+          regex: this.REGEX_UNSIGNED_INTEGER,
         },
       ],
     };
@@ -153,19 +168,7 @@ exports.getActions = function getActions() {
         },
       ],
     };
-    actions.info_v4 = {
-      label: 'Show clock info overlay V4',
-      options: [
-        {
-          type: 'textinput',
-          label: 'Duration (seconds)',
-          id: 'duration',
-          width: 5,
-          default: 30,
-          regex: this.REGEX_UNSIGNED_INTEGER,
-        },
-      ],
-    };
+
     actions.send_text_v4 = {
       label: 'Send text V4',
       options: [
@@ -394,6 +397,14 @@ exports.getActions = function getActions() {
   }
 
   // Common actions
+  actions.pause_timers = {
+    label: 'Pause all timers',
+  };
+
+  actions.resume_timers = {
+    label: 'Resume all timers',
+  };
+
   actions.sync_time = {
     label: 'Sync clock time with the companion computer',
     options: [
@@ -448,6 +459,7 @@ exports.doAction = function doAction(action) {
     secs = parseTime(action.options.hours, action.options.mins, action.options.secs);
   }
 
+  // V4 timer commands
   if (action.action === 'start_countdown_v4') {
     addr = `/clock/timer/${action.options.timer}/countdown`;
     payload = [{
@@ -455,6 +467,15 @@ exports.doAction = function doAction(action) {
       value: secs,
     }];
   }
+
+  if (action.action === 'target_countdown_v4') {
+    addr = `/clock/timer/${action.options.timer}/countdown/target`;
+    payload = [{
+     type: 's',
+     value: action.options.target,
+    }];
+  }
+
   if (action.action === 'start_countup_v4') {
     addr = `/clock/timer/${action.options.timer}/countup`;
     payload = [{
@@ -462,6 +483,15 @@ exports.doAction = function doAction(action) {
       value: secs,
     }];
   }
+
+  if (action.action === 'target_countup_v4') {
+    addr = `/clock/timer/${action.options.timer}/countup/target`;
+    payload = [{
+     type: 's',
+     value: action.options.target,
+    }];
+  }
+
   if (action.action === 'timer_modify_v4') {
     addr = `/clock/timer/${action.options.timer}/modify`;
     payload = [{
@@ -469,30 +499,58 @@ exports.doAction = function doAction(action) {
       value: secs,
     }];
   }
-  if (action.action === 'timer_stop_v4') {
-    addr = `/clock/timer/${action.options.timer}/modify`;
-  }
+
   if (action.action === 'timer_pause_v4') {
     addr = `/clock/timer/${action.options.timer}/pause`;
   }
+
   if (action.action === 'timer_resume_v4') {
+    addr = `/clock/timer/${action.options.timer}/resume`;
+  }
+
+  if (action.action === 'timer_stop_v4') {
     addr = `/clock/timer/${action.options.timer}/modify`;
   }
-  if (action.action === 'timer_countdown_target_v4') {
-    addr = `/clock/timer/${action.options.timer}/countdown/target`;
+
+  if (action.action === 'pause_timers') {
+    addr = '/clock/pause';
+  }
+
+  if (action.action === 'resume_timers') {
+    addr = '/clock/resume';
+  }
+
+  // V4 Source commands
+  if (action.action === 'source_hide_v4') {
+    addr = `/clock/source/${action.options.source}/hide`;
+  }
+
+  if (action.action === 'source_show_v4') {
+    addr = `/clock/source/${action.options.source}/show`;
+  }
+
+  if (action.action === 'source_title_v4') {
+    addr = `/clock/source/${action.options.source}/show`;
     payload = [{
       type: 's',
-      value: action.options.target,
+      value: action.options.title,
     },
     ];
   }
 
-  if (action.action === 'source_hide_v4') {
-    addr = `/clock/source/${action.options.source}/hide`;
+  if (action.action === 'hide_sources_v4') {
+    addr = '/clock/hide';
   }
-  if (action.action === 'source_show_v4') {
-    addr = `/clock/source/${action.options.source}/show`;
+
+  if (action.action === 'show_sources_v4') {
+    addr = '/clock/show';
   }
+
+  // Misc commands
+  if (action.action === 'info_v4') {
+    addr = '/clock/info';
+  }
+
   if (action.action === 'background_v4') {
     addr = '/clock/background';
     payload = [{
@@ -501,9 +559,7 @@ exports.doAction = function doAction(action) {
     },
     ];
   }
-  if (action.action === 'info_v4') {
-    addr = '/clock/info';
-  }
+
   if (action.action === 'send_text_v4') {
     const red = {
       type: 'i',
@@ -561,27 +617,36 @@ exports.doAction = function doAction(action) {
     payload = [{ type: 's', value: time }];
   }
 
+
+  // Legacy V3 commands
   if (action.action === 'kill_display') {
     addr = '/clock/kill';
   }
+
   if (action.action === 'normal_mode') {
     addr = '/clock/normal';
   }
+
   if (action.action === 'seconds_off') {
     addr = '/clock/seconds/off';
   }
+
   if (action.action === 'seconds_on') {
     addr = '/clock/seconds/on';
   }
+
   if (action.action === 'start_countup') {
     addr = '/clock/countup/start';
   }
+
   if (action.action === 'pause_countdown') {
     addr = '/clock/pause';
   }
+
   if (action.action === 'resume_countdown') {
     addr = '/clock/resume';
   }
+
   if (action.action === 'start_countdown') {
     addr = '/clock/countdown/start';
     payload = [{
@@ -590,6 +655,7 @@ exports.doAction = function doAction(action) {
     },
     ];
   }
+
   if (action.action === 'start_countdown2') {
     addr = '/clock/countdown2/start';
     payload = [{
@@ -598,6 +664,7 @@ exports.doAction = function doAction(action) {
     },
     ];
   }
+
   if (action.action === 'modify_countdown') {
     addr = '/clock/countdown/modify';
     payload = [{
@@ -606,6 +673,7 @@ exports.doAction = function doAction(action) {
     },
     ];
   }
+
   if (action.action === 'modify_countdown2') {
     addr = '/clock/countdown2/modify';
     payload = [{
@@ -614,12 +682,15 @@ exports.doAction = function doAction(action) {
     },
     ];
   }
+
   if (action.action === 'stop_countdown') {
     addr = '/clock/countdown/stop';
   }
+
   if (action.action === 'stop_countdown2') {
     addr = '/clock/countdown2/stop';
   }
+
   if (action.action === 'send_text') {
     const red = {
       type: 'f',
