@@ -8,17 +8,50 @@ let log;
 
 class instance extends instance_skel {
   constructor(system, id, config) {
+    let i;
     super(system, id, config);
 
     Object.assign(this, { ...actions });
     Object.assign(this, { ...presets });
 
-    this.feedbackstate = {
+    this.feedbackState = {
       time: '00:00:00',
       tally: '',
       mode: '0',
       paused: '0',
+      timers: [],
+      sources: [],
+      uuid: '',
+      timestamp: Date.now(),
     };
+
+    for (i = 0; i < 10; i++) {
+      this.feedbackState.timers.push({
+        active: false,
+        time: '00:00:00',
+        compact: '',
+        icon: '',
+        paused: false,
+        expired: false,
+        progress: 1.0,
+      });
+    }
+
+    // Source array index 0 is unused, only there to help
+    // with indexing...
+    for (i = 0; i < 5; i++) {
+      this.feedbackState.sources.push({
+        hidden: true,
+        time: '00:00:00',
+        compact: '',
+        icon: '',
+        paused: false,
+        expired: false,
+        progress: 1.0,
+        mode: 0,
+        title: '',
+      });
+    }
 
     this.actions();
   }
@@ -182,25 +215,25 @@ class instance extends instance_skel {
 
   feedback(feedback) {
     if (feedback.type === 'state_color') {
-      if (this.feedbackstate.state === '0') {
+      if (this.feedbackState.state === '0') {
         return {
           color: feedback.options.normal_fg,
           bgcolor: feedback.options.normal_bg,
         };
       }
-      if (this.feedbackstate.state === '1') {
+      if (this.feedbackState.state === '1') {
         return {
           color: feedback.options.countdown_fg,
           bgcolor: feedback.options.countdown_bg,
         };
       }
-      if (this.feedbackstate.state === '2') {
+      if (this.feedbackState.state === '2') {
         return {
           color: feedback.options.countup_fg,
           bgcolor: feedback.options.countup_bg,
         };
       }
-      if (this.feedbackstate.state === '3') {
+      if (this.feedbackState.state === '3') {
         return {
           color: feedback.options.off_fg,
           bgcolor: feedback.options.off_bg,
@@ -208,7 +241,7 @@ class instance extends instance_skel {
       }
     }
     if (feedback.type === 'pause_color') {
-      if (this.feedbackstate.paused === '1') {
+      if (this.feedbackState.paused === '1') {
         return {
           color: feedback.options.paused_fg,
           bgcolor: feedback.options.paused_bg,
@@ -223,7 +256,8 @@ class instance extends instance_skel {
   }
 
   init_variables() {
-    const variables = [
+    let i;
+    let variables = [
       {
         label: 'State of timer (NORMAL, COUNTUP, COUNTDOWN, OFF)',
         name: 'state',
@@ -257,12 +291,132 @@ class instance extends instance_skel {
         name: 'paused',
       },
     ];
+
+    for (i = 0; i < 10; i++) {
+      variables = variables.concat([
+        {
+          label: `Timer ${i} icon`,
+          name: `timer_${i}_icon`,
+        },
+        {
+          label: `Timer ${i} hours`,
+          name: `timer_${i}_hours`,
+        },
+        {
+          label: `Timer ${i} minutes`,
+          name: `timer_${i}_minutes`,
+        },
+        {
+          label: `Timer ${i} seconds`,
+          name: `timer_${i}_seconds`,
+        },
+      ]);
+    }
+
+    for (i = 1; i < 5; i++) {
+      variables = variables.concat([
+        {
+          label: `Source ${i} icon`,
+          name: `source_${i}_icon`,
+        },
+        {
+          label: `Source ${i} hours`,
+          name: `source_${i}_hours`,
+        },
+        {
+          label: `Source ${i} minutes`,
+          name: `source_${i}_minutes`,
+        },
+        {
+          label: `Source ${i} seconds`,
+          name: `source_${i}_seconds`,
+        },
+      ]);
+    }
+
     this.updateState();
     this.setVariableDefinitions(variables);
   }
 
   updateState() {
-    const info = this.feedbackstate.time.split(':');
+    let i;
+    let parts;
+    let hours;
+    let mins;
+    let secs;
+    let icon;
+
+    // Timers
+    for (i = 0; i < 10; i++) {
+      if (this.feedbackState.timers[i].active) {
+        parts = this.feedbackState.timers[i].time.split(':');
+        if (parts.length === 4) {
+          // LTC active
+          icon = parts[0];
+          hours = parts[1];
+          mins = parts[2];
+          secs = parts[3];
+        } else if (parts.length === 3) {
+          icon = this.feedbackState.timers[i].icon;
+          hours = parts[0];
+          mins = parts[1];
+          secs = parts[2];
+        } else {
+          hours = '';
+          mins = '';
+          secs = '';
+          icon = '';
+        }
+      } else {
+        hours = '';
+        mins = '';
+        secs = '';
+        icon = '';
+      }
+      this.setVariable(`timer_${i}_icon`, icon);
+      this.setVariable(`timer_${i}_hours`, hours);
+      this.setVariable(`timer_${i}_minutes`, mins);
+      this.setVariable(`timer_${i}_seconds`, secs);
+    }
+
+    // Sources
+    for (i = 1; i < 5; i++) {
+      if (this.feedbackState.sources[i].hidden === false) {
+        parts = this.feedbackState.sources[i].time.split(':');
+        if (parts.length === 4) {
+          // LTC active
+          icon = parts[0];
+          hours = parts[1];
+          mins = parts[2];
+          secs = parts[3];
+        } else if (parts.length === 3) {
+          icon = this.feedbackState.sources[i].icon;
+          hours = parts[0];
+          mins = parts[1];
+          secs = parts[2];
+        } else {
+          hours = '';
+          mins = '';
+          secs = '';
+          icon = '';
+        }
+      } else {
+        hours = '';
+        mins = '';
+        secs = '';
+        icon = '';
+      }
+      this.setVariable(`source_${i}_icon`, icon);
+      this.setVariable(`source_${i}_hours`, hours);
+      this.setVariable(`source_${i}_minutes`, mins);
+      this.setVariable(`source_${i}_seconds`, secs);
+    }
+
+    this.updateLegacyState();
+  }
+
+  updateLegacyState() {
+    const info = this.feedbackState.time.split(':');
     const states = {
       0: 'NORMAL',
       1: 'COUNTDOWN',
@@ -279,18 +433,21 @@ class instance extends instance_skel {
       this.setVariable('time', `${info[1]}:${info[2]}`);
       this.setVariable('time_hm', `00:${info[1]}`);
     } else {
-      this.setVariable('time', this.feedbackstate.time);
+      this.setVariable('time', this.feedbackState.time);
       this.setVariable('time_hm', `${info[0]}:${info[1]}`);
     }
     this.setVariable('time_h', info[0]);
     this.setVariable('time_m', info[1]);
     this.setVariable('time_s', info[2]);
-    this.setVariable('state', states[this.feedbackstate.state]);
-    this.setVariable('tally', this.feedbackstate.tally);
-    this.setVariable('paused', pause[this.feedbackstate.paused]);
+    this.setVariable('state', states[this.feedbackState.state]);
+    this.setVariable('tally', this.feedbackState.tally);
+    this.setVariable('paused', pause[this.feedbackState.paused]);
   }
 
   init_osc() {
+    const statePattern = /^\/clock\/(timer|source)\/([0-9])\/state/;
+    const timerPattern = /^\/clock\/timer\/([0-9])\/state/;
+    const sourcePattern = /^\/clock\/source\/([1-4])\/state/;
     if (this.listener) {
       this.listener.close();
     }
@@ -302,23 +459,73 @@ class instance extends instance_skel {
     this.listener.open();
     this.listener.on('ready', function setReady() {
       this.ready = true;
+      debug('ready');
     });
-    this.listener.on('message', function processMessage(message) {
+    this.listener.on('message', (message) => {
       let a;
       let mode;
+
+      // Legacy V3 state message
       if (message.address.match(/^\/clock\/state/)) {
         if (message.args.length >= 5) {
           a = message.args;
           mode = a[0].value;
-          this.feedbackstate.state = mode;
-          this.feedbackstate.time = `${a[1].value}:${a[2].value}:${a[3].value}`;
-          this.feedbackstate.tally = a[4].value;
+          this.feedbackState.state = mode;
+          this.feedbackState.time = `${a[1].value}:${a[2].value}:${a[3].value}`;
+          this.feedbackState.tally = a[4].value;
           this.updateState();
           this.checkFeedbacks('state_color');
         }
         if (message.args.length === 6) {
-          this.feedbackstate.paused = message.args[5].value;
+          this.feedbackState.paused = message.args[5].value;
           this.checkFeedbacks('pause_color');
+          this.updateState();
+        }
+      }
+
+      // V4 state messages
+      if (message.address.match(statePattern) && message.args.length > 0) {
+        if (this.feedbackState.uuid === message.args[0].value || this.feedbackState.timestamp < Date.now() - 1000) {
+          this.feedbackState.uuid = message.args[0].value;
+          this.feedbackState.timestamp = Date.now();
+        } else {
+          // Missmatched UUID and previous clock hasn't timed out
+          return;
+        }
+
+        // Timer state messages
+        if (message.address.match(timerPattern)) {
+          if (message.args.length === 8) {
+            const timer = message.address.match(timerPattern)[1];
+            const args = message.args;
+            this.feedbackState.timers[timer] = {
+              active: args[1].value,
+              time: args[2].value,
+              compact: args[3].value,
+              icon: args[4].value,
+              progress: args[5].value,
+              expired: args[6].value,
+              paused: args[7].value,
+            };
+            this.updateState();
+          }
+        } else if (message.address.match(sourcePattern)) {
+          if (message.args.length === 10) {
+            const source = message.address.match(sourcePattern)[1];
+            const args = message.args;
+            this.feedbackState.sources[source] = {
+              hidden: args[1].value,
+              time: args[2].value,
+              compact: args[3].value,
+              icon: args[4].value,
+              progress: args[5].value,
+              expired: args[6].value,
+              paused: args[7].value,
+              title: args[8].value,
+              mode: args[9].value,
+            };
+            this.updateState();
+          }
         }
       }
     });

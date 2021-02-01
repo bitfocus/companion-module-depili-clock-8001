@@ -19,6 +19,62 @@ exports.getPresets = function getPresets() {
     for (i = 1; i <= timerColors.length; i++) {
       presets.push({
         category: `Timer ${i}`,
+        label: 'Icon',
+        bank: {
+          style: 'text',
+          text: `$(label:timer_${i}_icon)`,
+          size: 'auto',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [],
+        feedbacks: [],
+      });
+
+      presets.push({
+        category: `Timer ${i}`,
+        label: 'Hours',
+        bank: {
+          style: 'text',
+          text: `$(label:timer_${i}_hours)`,
+          size: 'auto',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [],
+        feedbacks: [],
+      });
+
+      presets.push({
+        category: `Timer ${i}`,
+        label: 'Minutes',
+        bank: {
+          style: 'text',
+          text: `$(label:timer_${i}_minutes)`,
+          size: 'auto',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [],
+        feedbacks: [],
+      });
+
+      presets.push({
+        category: `Timer ${i}`,
+        label: 'Seconds',
+        bank: {
+          style: 'text',
+          text: `$(label:timer_${i}_seconds)`,
+          size: 'auto',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [],
+        feedbacks: [],
+      });
+
+      presets.push({
+        category: `Timer ${i}`,
         label: 'Set 5 min countdown',
         bank: {
           style: 'text',
@@ -261,6 +317,62 @@ exports.getPresets = function getPresets() {
     // End of timer preset loop
 
     for (i = 1; i < 4; i++) {
+      presets.push({
+        category: `Source ${i}`,
+        label: 'Icon',
+        bank: {
+          style: 'text',
+          text: `$(label:source_${i}_icon)`,
+          size: 'auto',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [],
+        feedbacks: [],
+      });
+
+      presets.push({
+        category: `Source ${i}`,
+        label: 'Hours',
+        bank: {
+          style: 'text',
+          text: `$(label:source_${i}_hours)`,
+          size: 'auto',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [],
+        feedbacks: [],
+      });
+
+      presets.push({
+        category: `Source ${i}`,
+        label: 'Minutes',
+        bank: {
+          style: 'text',
+          text: `$(label:source_${i}_minutes)`,
+          size: 'auto',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [],
+        feedbacks: [],
+      });
+
+      presets.push({
+        category: `Source ${i}`,
+        label: 'Seconds',
+        bank: {
+          style: 'text',
+          text: `$(label:source_${i}_seconds)`,
+          size: 'auto',
+          color: '16777215',
+          bgcolor: timerColors[i - 1],
+        },
+        actions: [],
+        feedbacks: [],
+      });
+
       presets.push({
         category: 'Sources',
         label: `Hide source ${i}`,
