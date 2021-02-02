@@ -384,6 +384,10 @@ class instance extends instance_skel {
       secs = '';
       icon = '';
     }
+
+    // Replace the pause symbol with something in the font Companion uses
+    icon = icon.replace('Ⅱ', '⏸︎');
+
     this.setVariable(`timer_${timer}_icon`, icon);
     this.setVariable(`timer_${timer}_hours`, hours);
     this.setVariable(`timer_${timer}_minutes`, mins);
@@ -422,6 +426,9 @@ class instance extends instance_skel {
       secs = '';
       icon = '';
     }
+    // Replace the pause symbol with something in the font Companion uses
+    icon = icon.replace('Ⅱ', '⏸︎');
+
     this.setVariable(`source_${source}_icon`, icon);
     this.setVariable(`source_${source}_hours`, hours);
     this.setVariable(`source_${source}_minutes`, mins);
