@@ -509,7 +509,7 @@ exports.doAction = function doAction(action) {
   }
 
   if (action.action === 'timer_stop_v4') {
-    addr = `/clock/timer/${action.options.timer}/modify`;
+    addr = `/clock/timer/${action.options.timer}/stop`;
   }
 
   if (action.action === 'pause_timers') {
