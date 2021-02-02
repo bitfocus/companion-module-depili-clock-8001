@@ -478,10 +478,6 @@ exports.doAction = function doAction(action) {
 
   if (action.action === 'start_countup_v4') {
     addr = `/clock/timer/${action.options.timer}/countup`;
-    payload = [{
-      type: 'i',
-      value: secs,
-    }];
   }
 
   if (action.action === 'target_countup_v4') {
