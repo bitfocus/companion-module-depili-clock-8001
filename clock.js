@@ -37,8 +37,7 @@ class instance extends instance_skel {
       });
     }
 
-    // Source array index 0 is unused, only there to help
-    // with indexing...
+    // Source array index 0 is unused, only there to help with indexing...
     for (i = 0; i < 5; i++) {
       this.feedbackState.sources.push({
         hidden: true,
@@ -340,79 +339,93 @@ class instance extends instance_skel {
 
   updateState() {
     let i;
-    let parts;
+
+    // Timers
+    for (i = 0; i < 10; i++) {
+      this.updateTimerVariables(i);
+    }
+
+    // Sources
+    for (i = 1; i < 5; i++) {
+      this.updateSourceVariables(i);
+    }
+
+    this.updateLegacyState();
+  }
+
+  updateTimerVariables(timer) {
     let hours;
     let mins;
     let secs;
     let icon;
 
-    // Timers
-    for (i = 0; i < 10; i++) {
-      if (this.feedbackState.timers[i].active) {
-        parts = this.feedbackState.timers[i].time.split(':');
-        if (parts.length === 4) {
-          // LTC active
-          icon = parts[0];
-          hours = parts[1];
-          mins = parts[2];
-          secs = parts[3];
-        } else if (parts.length === 3) {
-          icon = this.feedbackState.timers[i].icon;
-          hours = parts[0];
-          mins = parts[1];
-          secs = parts[2];
-        } else {
-          hours = '';
-          mins = '';
-          secs = '';
-          icon = '';
-        }
+    if (this.feedbackState.timers[timer].active) {
+      const parts = this.feedbackState.timers[timer].time.split(':');
+      if (parts.length === 4) {
+        // LTC active
+        icon = parts[0];
+        hours = parts[1];
+        mins = parts[2];
+        secs = parts[3];
+      } else if (parts.length === 3) {
+        icon = this.feedbackState.timers[timer].icon;
+        hours = parts[0];
+        mins = parts[1];
+        secs = parts[2];
       } else {
         hours = '';
         mins = '';
         secs = '';
         icon = '';
       }
-      this.setVariable(`timer_${i}_icon`, icon);
-      this.setVariable(`timer_${i}_hours`, hours);
-      this.setVariable(`timer_${i}_minutes`, mins);
-      this.setVariable(`timer_${i}_seconds`, secs);
+    } else {
+      hours = '';
+      mins = '';
+      secs = '';
+      icon = '';
     }
+    this.setVariable(`timer_${timer}_icon`, icon);
+    this.setVariable(`timer_${timer}_hours`, hours);
+    this.setVariable(`timer_${timer}_minutes`, mins);
+    this.setVariable(`timer_${timer}_seconds`, secs);
+  }
 
-    // Sources
-    for (i = 1; i < 5; i++) {
-      if (this.feedbackState.sources[i].hidden === false) {
-        parts = this.feedbackState.sources[i].time.split(':');
-        if (parts.length === 4) {
-          // LTC active
-          icon = parts[0];
-          hours = parts[1];
-          mins = parts[2];
-          secs = parts[3];
-        } else if (parts.length === 3) {
-          icon = this.feedbackState.sources[i].icon;
-          hours = parts[0];
-          mins = parts[1];
-          secs = parts[2];
-        } else {
-          hours = '';
-          mins = '';
-          secs = '';
-          icon = '';
-        }
+
+  updateSourceVariables(source) {
+    let hours;
+    let mins;
+    let secs;
+    let icon;
+
+    if (this.feedbackState.sources[source].hidden === false) {
+      const parts = this.feedbackState.sources[source].time.split(':');
+      if (parts.length === 4) {
+        // LTC active
+        icon = parts[0];
+        hours = parts[1];
+        mins = parts[2];
+        secs = parts[3];
+      } else if (parts.length === 3) {
+        icon = this.feedbackState.sources[source].icon;
+        hours = parts[0];
+        mins = parts[1];
+        secs = parts[2];
       } else {
         hours = '';
         mins = '';
         secs = '';
         icon = '';
       }
-      this.setVariable(`source_${i}_icon`, icon);
-      this.setVariable(`source_${i}_hours`, hours);
-      this.setVariable(`source_${i}_minutes`, mins);
-      this.setVariable(`source_${i}_seconds`, secs);
+    } else {
+      hours = '';
+      mins = '';
+      secs = '';
+      icon = '';
     }
-
-    this.updateLegacyState();
+    this.setVariable(`source_${source}_icon`, icon);
+    this.setVariable(`source_${source}_hours`, hours);
+    this.setVariable(`source_${source}_minutes`, mins);
+    this.setVariable(`source_${source}_seconds`, secs);
   }
 
   updateLegacyState() {
@@ -473,13 +486,13 @@ class instance extends instance_skel {
           this.feedbackState.state = mode;
           this.feedbackState.time = `${a[1].value}:${a[2].value}:${a[3].value}`;
           this.feedbackState.tally = a[4].value;
-          this.updateState();
+          this.updateLegacyState();
           this.checkFeedbacks('state_color');
         }
         if (message.args.length === 6) {
           this.feedbackState.paused = message.args[5].value;
+          this.updateLegacyState();
           this.checkFeedbacks('pause_color');
-          this.updateState();
         }
       }
 
@@ -507,7 +520,7 @@ class instance extends instance_skel {
               expired: args[6].value,
               paused: args[7].value,
             };
-            this.updateState();
+            this.updateTimerVariables(timer);
           }
         } else if (message.address.match(sourcePattern)) {
           if (message.args.length === 10) {
@@ -524,7 +537,7 @@ class instance extends instance_skel {
               title: args[8].value,
               mode: args[9].value,
             };
-            this.updateState();
+            this.updateSourceVariables(source);
           }
         }
       }
