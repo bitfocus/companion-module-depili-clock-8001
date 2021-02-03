@@ -2,21 +2,41 @@ exports.getPresets = function getPresets() {
   const presets = [];
   let i;
 
+  const white = this.rgb(255, 255, 255);
+  const black = this.rgb(0, 0, 0);
   const timerColors = [
-    this.rgb(0, 0, 255),
-    this.rgb(0, 204, 255),
-    this.rgb(204, 0, 255),
-    this.rgb(0, 255, 0),
-    this.rgb(0, 255, 204),
-    this.rgb(204, 255, 0),
+    black,
+    this.rgb(102, 51, 0),
     this.rgb(255, 0, 0),
-    this.rgb(255, 204, 0),
-    this.rgb(255, 0, 204),
-    this.rgb(128, 128, 255),
+    this.rgb(255, 102, 0),
+    this.rgb(255, 255, 0),
+    this.rgb(0, 255, 0),
+    this.rgb(0, 0, 255),
+    this.rgb(255, 0, 255),
+    this.rgb(120, 120, 120),
+    white,
+  ];
+  const timerTextColors = [
+    white,
+    white,
+    white,
+    white,
+    black,
+    black,
+    white,
+    white,
+    white,
+    black,
+  ];
+  const sourceColors = [
+    this.rgb(15, 82, 141),
+    this.rgb(61, 130, 191),
+    this.rgb(70, 107, 128),
+    this.rgb(138, 153, 163),
   ];
 
   if (this.config.version === '4' || this.config.version === 'mixed') {
-    for (i = 1; i <= timerColors.length; i++) {
+    for (i = 0; i < timerColors.length; i++) {
       presets.push({
         category: `Timer ${i}`,
         label: 'Icon',
@@ -24,8 +44,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: `$(label:timer_${i}_icon)`,
           size: 'auto',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [],
         feedbacks: [],
@@ -38,8 +58,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: `$(label:timer_${i}_hours)`,
           size: 'auto',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [],
         feedbacks: [],
@@ -52,8 +72,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: `$(label:timer_${i}_minutes)`,
           size: 'auto',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [],
         feedbacks: [],
@@ -66,8 +86,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: `$(label:timer_${i}_seconds)`,
           size: 'auto',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [],
         feedbacks: [],
@@ -80,8 +100,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: 'Start\\n5 min',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -103,8 +123,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: 'Start\\n10 min',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -126,8 +146,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: 'Start\\n30 min',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -149,8 +169,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: 'Start\\ncount',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -169,8 +189,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: 'Pause',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -189,8 +209,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: 'Resume',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -209,8 +229,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: 'Stop',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -229,8 +249,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: '+1\\nmin',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -252,8 +272,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: '-1\\nmin',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -275,8 +295,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: '+2\\nsec',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -298,8 +318,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: '-2\\nsec',
           size: '18',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
         },
         actions: [
           {
@@ -324,8 +344,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: `$(label:source_${i}_icon)`,
           size: 'auto',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: white,
+          bgcolor: sourceColors[i - 1],
         },
         actions: [],
         feedbacks: [],
@@ -338,8 +358,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: `$(label:source_${i}_hours)`,
           size: 'auto',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: white,
+          bgcolor: sourceColors[i - 1],
         },
         actions: [],
         feedbacks: [],
@@ -352,8 +372,8 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: `$(label:source_${i}_minutes)`,
           size: 'auto',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: white,
+          bgcolor: sourceColors[i - 1],
         },
         actions: [],
         feedbacks: [],
@@ -366,22 +386,22 @@ exports.getPresets = function getPresets() {
           style: 'text',
           text: `$(label:source_${i}_seconds)`,
           size: 'auto',
-          color: '16777215',
-          bgcolor: timerColors[i - 1],
+          color: white,
+          bgcolor: sourceColors[i - 1],
         },
         actions: [],
         feedbacks: [],
       });
 
       presets.push({
-        category: 'Sources',
+        category: `Source ${i}`,
         label: `Hide source ${i}`,
         bank: {
           style: 'text',
           text: `Hide\\nSRC ${i}`,
           size: '18',
-          color: '16777215',
-          bgcolor: this.rgb(0, 0, 255),
+          color: white,
+          bgcolor: sourceColors[i - 1],
         },
         actions: [
           {
@@ -393,14 +413,14 @@ exports.getPresets = function getPresets() {
         ],
       });
       presets.push({
-        category: 'Sources',
+        category: `Source ${i}`,
         label: `Show source ${i}`,
         bank: {
           style: 'text',
           text: `Show\\nSRC ${i}`,
           size: '18',
-          color: '16777215',
-          bgcolor: this.rgb(0, 0, 255),
+          color: white,
+          bgcolor: sourceColors[i - 1],
         },
         actions: [
           {
@@ -415,14 +435,14 @@ exports.getPresets = function getPresets() {
     // End of source preset loop
 
     presets.push({
-      category: 'Sources',
+      category: 'All sources',
       label: 'Hide all sources',
       bank: {
         style: 'text',
         text: 'Hide\\nall',
         size: '18',
-        color: '16777215',
-        bgcolor: this.rgb(0, 0, 255),
+        color: black,
+        bgcolor: this.rgb(255, 204, 255),
       },
       actions: [
       {
@@ -433,14 +453,14 @@ exports.getPresets = function getPresets() {
     });
 
     presets.push({
-      category: 'Sources',
+      category: 'All sources',
       label: 'Show all sources',
       bank: {
         style: 'text',
         text: 'Show\\nall',
         size: '18',
-        color: '16777215',
-        bgcolor: this.rgb(0, 0, 255),
+        color: black,
+        bgcolor: this.rgb(255, 204, 255),
       },
       actions: [
       {
@@ -458,8 +478,8 @@ exports.getPresets = function getPresets() {
         style: 'text',
         text: 'Info',
         size: '18',
-        color: '16777215',
-        bgcolor: this.rgb(0, 0, 255),
+        color: black,
+        bgcolor: this.rgb(153, 255, 204),
       },
       actions: [
       {
@@ -476,8 +496,8 @@ exports.getPresets = function getPresets() {
         style: 'text',
         text: 'Pause\\nall',
         size: '18',
-        color: '16777215',
-        bgcolor: this.rgb(0, 0, 255),
+        color: black,
+        bgcolor: this.rgb(204, 255, 255),
       },
       actions: [
       {
@@ -494,8 +514,8 @@ exports.getPresets = function getPresets() {
         style: 'text',
         text: 'Resume\\nall',
         size: '18',
-        color: '16777215',
-        bgcolor: this.rgb(0, 0, 255),
+        color: black,
+        bgcolor: this.rgb(204, 255, 255),
       },
       actions: [
       {
@@ -1115,8 +1135,8 @@ exports.getPresets = function getPresets() {
       style: 'text',
       text: 'Sync clock',
       size: 'auto',
-      color: this.rgb(255, 255, 255),
-      bgcolor: 6619136,
+      color: white,
+      bgcolor: this.rgb(88, 23, 88),
     },
     actions: [
       {
