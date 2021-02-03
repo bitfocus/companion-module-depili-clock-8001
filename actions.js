@@ -526,7 +526,7 @@ exports.doAction = function doAction(action) {
   }
 
   if (action.action === 'source_title_v4') {
-    addr = `/clock/source/${action.options.source}/show`;
+    addr = `/clock/source/${action.options.source}/title`;
     payload = [{
       type: 's',
       value: action.options.title,
