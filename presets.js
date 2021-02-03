@@ -525,6 +525,180 @@ exports.getPresets = function getPresets() {
       ],
     });
 
+   // Text presets
+   presets.push({
+      category: 'Text',
+      label: 'Wrap up',
+      bank: {
+        style: 'text',
+        text: 'Wrap\\nup',
+        size: 'auto',
+        color: this.rgb(255, 0, 0,),
+        bgcolor: black,
+      },
+      actions: [
+      {
+        action: 'send_text_v4',
+        options: {
+          red: 255,
+          green: 0,
+          blue: 0,
+          alpha: 255,
+          bg_red: 0,
+          bg_green: 0,
+          bg_blue: 0,
+          bg_alpha: 255,
+          duration: 10,
+          text: 'Wrap up',
+        },
+      },
+      ],
+    });
+
+    presets.push({
+      category: 'Text',
+      label: 'Please stop',
+      bank: {
+        style: 'text',
+        text: 'Please\\nstop',
+        size: 'auto',
+        color: this.rgb(255, 0, 0,),
+        bgcolor: black,
+      },
+      actions: [
+      {
+        action: 'send_text_v4',
+        options: {
+          red: 255,
+          green: 0,
+          blue: 0,
+          alpha: 255,
+          bg_red: 0,
+          bg_green: 0,
+          bg_blue: 0,
+          bg_alpha: 255,
+          duration: 10,
+          text: 'Please stop',
+        },
+      },
+      ],
+    });
+
+    presets.push({
+      category: 'Text',
+      label: 'Stand by',
+      bank: {
+        style: 'text',
+        text: 'Stand\\nby',
+        size: 'auto',
+        color: black,
+        bgcolor: this.rgb(255, 255, 0),
+      },
+      actions: [
+      {
+        action: 'send_text_v4',
+        options: {
+          red: 0,
+          green: 0,
+          blue: 0,
+          alpha: 255,
+          bg_red: 255,
+          bg_green: 255,
+          bg_blue: 0,
+          bg_alpha: 255,
+          duration: 0,
+          text: 'Stand by',
+        },
+      },
+      ],
+    });
+
+    presets.push({
+      category: 'Text',
+      label: 'GO',
+      bank: {
+        style: 'text',
+        text: 'GO',
+        size: 'auto',
+        color: black,
+        bgcolor: this.rgb(0, 255, 0),
+      },
+      actions: [
+      {
+        action: 'send_text_v4',
+        options: {
+          red: 0,
+          green: 0,
+          blue: 0,
+          alpha: 255,
+          bg_red: 0,
+          bg_green: 255,
+          bg_blue: 0,
+          bg_alpha: 255,
+          duration: 0,
+          text: 'GO',
+        },
+      },
+      ],
+    });
+
+    presets.push({
+      category: 'Text',
+      label: 'On air',
+      bank: {
+        style: 'text',
+        text: 'On\\nair',
+        size: 'auto',
+        color: white,
+        bgcolor: this.rgb(255, 0, 0),
+      },
+      actions: [
+      {
+        action: 'send_text_v4',
+        options: {
+          red: 255,
+          green: 255,
+          blue: 255,
+          alpha: 255,
+          bg_red: 255,
+          bg_green: 0,
+          bg_blue: 0,
+          bg_alpha: 255,
+          duration: 0,
+          text: 'On air',
+        },
+      },
+      ],
+    });
+
+    presets.push({
+      category: 'Text',
+      label: 'Clear text',
+      bank: {
+        style: 'text',
+        text: 'Clear\\ntext',
+        size: 'auto',
+        color: white,
+        bgcolor: black,
+      },
+      actions: [
+      {
+        action: 'send_text_v4',
+        options: {
+          red: 0,
+          green: 0,
+          blue: 0,
+          alpha: 0,
+          bg_red: 0,
+          bg_green: 0,
+          bg_blue: 0,
+          bg_alpha: 0,
+          duration: 1,
+          text: '',
+        },
+      },
+      ],
+    });
   }
   // End of V4 presets
 
