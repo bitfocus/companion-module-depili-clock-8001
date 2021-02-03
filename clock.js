@@ -96,17 +96,17 @@ class instance extends instance_skel {
 
   updateConfig(config) {
     this.config = config;
-    this.init_osc();
     this.actions();
     this.init_presets();
+    this.init_osc();
   }
 
   init() {
     debug = this.debug;
-    this.init_osc();
     this.init_variables();
     this.init_presets();
     this.init_feedbacks();
+    this.init_osc();
     this.status(this.STATE_OK);
   }
 
