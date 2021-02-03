@@ -484,7 +484,9 @@ exports.getPresets = function getPresets() {
       actions: [
       {
         action: 'info_v4',
-        options: {},
+        options: {
+          duration: 30,
+        },
       },
       ],
     });

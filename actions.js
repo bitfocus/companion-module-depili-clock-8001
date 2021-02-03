@@ -545,6 +545,10 @@ exports.doAction = function doAction(action) {
   // Misc commands
   if (action.action === 'info_v4') {
     addr = '/clock/info';
+    payload = [{
+      type: 'i',
+      value: action.options.duration
+    }]
   }
 
   if (action.action === 'background_v4') {
