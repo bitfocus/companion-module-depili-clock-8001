@@ -701,6 +701,29 @@ exports.getPresets = function getPresets() {
       },
       ],
     });
+
+    // Backgrounds
+    for (i = 1; i < 11; i++) {
+      presets.push({
+        category: 'Backgrounds',
+        label: `Select background ${i}`,
+        bank: {
+          style: 'text',
+          text: `BG ${i}`,
+          size: 'auto',
+          color: black,
+          bgcolor: this.rgb(35, 143, 52),
+        },
+        actions: [
+        {
+          action: 'background_v4',
+          options: {
+            bg: i,
+          },
+        },
+        ],
+      });
+    }
   }
   // End of V4 presets
 
