@@ -174,7 +174,7 @@ exports.getActions = function getActions() {
       options: [
         {
           type: 'textinput',
-          label: 'Text',
+          label: 'Text (clocks running on raspberries can display 17 characters, too long messages will be replaced with INVALID TEXT)',
           id: 'text',
           width: 30,
           default: 'stop',
@@ -548,7 +548,7 @@ exports.doAction = function doAction(action) {
     payload = [{
       type: 'i',
       value: action.options.duration
-    }]
+    }];
   }
 
   if (action.action === 'background_v4') {
