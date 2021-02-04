@@ -349,7 +349,7 @@ exports.getPresets = function getPresets() {
             action: 'target_countdown_v4',
             options: {
               timer: `${i}`,
-              target: '12:00',
+              target: '12:00:00',
             },
           },
         ],
@@ -370,7 +370,7 @@ exports.getPresets = function getPresets() {
             action: 'target_countup_v4',
             options: {
               timer: `${i}`,
-              target: '12:00',
+              target: '12:00:00',
             },
           },
         ],
