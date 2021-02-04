@@ -333,6 +333,48 @@ exports.getPresets = function getPresets() {
           },
         ],
       });
+
+      presets.push({
+        category: `Timer ${i}`,
+        label: 'Countdown to target',
+        bank: {
+          style: 'text',
+          text: 'To\\ntime',
+          size: '18',
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
+        },
+        actions: [
+          {
+            action: 'target_countdown_v4',
+            options: {
+              timer: `${i}`,
+              target: '12:00',
+            },
+          },
+        ],
+      });
+
+      presets.push({
+        category: `Timer ${i}`,
+        label: 'Count from target',
+        bank: {
+          style: 'text',
+          text: 'From\\ntime',
+          size: '18',
+          color: timerTextColors[i],
+          bgcolor: timerColors[i],
+        },
+        actions: [
+          {
+            action: 'target_countup_v4',
+            options: {
+              timer: `${i}`,
+              target: '12:00',
+            },
+          },
+        ],
+      });
     }
     // End of timer preset loop
 
