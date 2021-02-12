@@ -131,6 +131,131 @@ exports.getActions = function getActions() {
       ],
     };
 
+    actions.source_colors_v4 = {
+      label: 'Set source colors 4',
+      options: [
+        sourceOption,
+        {
+          type: 'textinput',
+          label: 'Red',
+          id: 'red',
+          default: 255,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Green',
+          id: 'green',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Blue',
+          id: 'blue',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Alpha',
+          id: 'alpha',
+          default: 255,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'BG Red',
+          id: 'bg_red',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'BG Green',
+          id: 'bg_green',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'BG Blue',
+          id: 'bg_blue',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'BG Alpha',
+          id: 'bg_alpha',
+          default: 64,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+      ],
+    };
+
+    actions.title_colors_v4 = {
+      label: 'Set source title colors 4',
+      options: [
+        {
+          type: 'textinput',
+          label: 'Red',
+          id: 'red',
+          default: 255,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Green',
+          id: 'green',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Blue',
+          id: 'blue',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Alpha',
+          id: 'alpha',
+          default: 255,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'BG Red',
+          id: 'bg_red',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'BG Green',
+          id: 'bg_green',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'BG Blue',
+          id: 'bg_blue',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'BG Alpha',
+          id: 'bg_alpha',
+          default: 255,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+      ],
+    };
+
     actions.hide_sources_v4 = {
       label: 'Hide all sources V4',
       options: [],
@@ -531,6 +656,88 @@ exports.doAction = function doAction(action) {
       type: 's',
       value: action.options.title,
     },
+    ];
+  }
+
+  if (action.action === 'source_colors_v4') {
+    const red = {
+      type: 'i',
+      value: action.options.red,
+    };
+    const green = {
+      type: 'i',
+      value: action.options.green,
+    };
+    const blue = {
+      type: 'i',
+      value: action.options.blue,
+    };
+    const alpha = {
+      type: 'i',
+      value: action.options.alpha,
+    };
+    const bgRed = {
+      type: 'i',
+      value: action.options.bg_red,
+    };
+    const bgGreen = {
+      type: 'i',
+      value: action.options.bg_green,
+    };
+    const bgBlue = {
+      type: 'i',
+      value: action.options.bg_blue,
+    };
+    const bgAlpha = {
+      type: 'i',
+      value: action.options.bg_alpha,
+    };
+
+    addr = `/clock/source/${action.options.source}/colors`;
+    payload = [
+      red, green, blue, alpha,
+      bgRed, bgGreen, bgBlue, bgAlpha,
+    ];
+  }
+
+   if (action.action === 'title_colors_v4') {
+    const red = {
+      type: 'i',
+      value: action.options.red,
+    };
+    const green = {
+      type: 'i',
+      value: action.options.green,
+    };
+    const blue = {
+      type: 'i',
+      value: action.options.blue,
+    };
+    const alpha = {
+      type: 'i',
+      value: action.options.alpha,
+    };
+    const bgRed = {
+      type: 'i',
+      value: action.options.bg_red,
+    };
+    const bgGreen = {
+      type: 'i',
+      value: action.options.bg_green,
+    };
+    const bgBlue = {
+      type: 'i',
+      value: action.options.bg_blue,
+    };
+    const bgAlpha = {
+      type: 'i',
+      value: action.options.bg_alpha,
+    };
+
+    addr = '/clock/titlecolors';
+    payload = [
+      red, green, blue, alpha,
+      bgRed, bgGreen, bgBlue, bgAlpha,
     ];
   }
 
