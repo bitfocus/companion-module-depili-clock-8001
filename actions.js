@@ -132,7 +132,7 @@ exports.getActions = function getActions() {
     };
 
     actions.source_colors_v4 = {
-      label: 'Set source colors 4',
+      label: 'Set source colors V4',
       options: [
         sourceOption,
         {
@@ -195,7 +195,7 @@ exports.getActions = function getActions() {
     };
 
     actions.title_colors_v4 = {
-      label: 'Set source title colors 4',
+      label: 'Set source title colors V4',
       options: [
         {
           type: 'textinput',
