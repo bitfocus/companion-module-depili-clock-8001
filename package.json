@@ -1,6 +1,6 @@
 {
 	"name": "depili-clock-8001",
-	"version": "5.0.1",
+	"version": "5.1.0",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Timing",
@@ -15,5 +15,8 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Vesa-Pekka Palmu",
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {
+		"osc": "^2.4.1"
+	}
 }
