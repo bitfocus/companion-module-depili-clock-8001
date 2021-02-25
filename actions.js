@@ -580,7 +580,7 @@ exports.doAction = function doAction(action) {
     return secs;
   }
 
-  if (action.options.hours) {
+  if (action.options && action.options.hours) {
     secs = parseTime(action.options.hours, action.options.mins, action.options.secs);
   }
 
@@ -818,10 +818,19 @@ exports.doAction = function doAction(action) {
   }
 
   if (action.action === 'sync_time') {
-    const today = new Date();
-    const time = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+    const now = new Date();
+    const h = now.getHours().
+      toString().
+      padStart(2, '0');
+    const m = now.getMinutes().
+      toString().
+      padStart(2, '0');
+    const s = now.getSeconds().
+      toString().
+      padStart(2, '0');
+    const hms = `${h}:${m}:${s}`;
     addr = '/clock/time/set';
-    payload = [{ type: 's', value: time }];
+    payload = [{ type: 's', value: hms }];
   }
 
 
