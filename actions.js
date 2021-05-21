@@ -580,7 +580,7 @@ exports.doAction = function doAction(action) {
     return secs;
   }
 
-  if (action.options && action.options.hours) {
+  if (action.options && (action.options.hours || action.options.mins || action.options.secs)) {
     secs = parseTime(action.options.hours, action.options.mins, action.options.secs);
   }
 
