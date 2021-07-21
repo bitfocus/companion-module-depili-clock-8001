@@ -104,6 +104,76 @@ exports.getActions = function getActions() {
       ],
     };
 
+    actions.timer_signal_v4 = {
+      label: 'Set signal color for timer V4',
+      options: [
+        timerOption,
+        {
+          type: 'textinput',
+          label: 'Red',
+          id: 'red',
+          default: 255,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Green',
+          id: 'green',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Blue',
+          id: 'blue',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Alpha',
+          id: 'alpha',
+          default: 255,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+      ],
+    };
+
+    actions.hardware_signal_v4 = {
+      label: 'Set hardware signal color for timer V4',
+      options: [
+        {
+          type: 'textinput',
+          label: 'Signal group',
+          id: 'group',
+          default: 1,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Red',
+          id: 'red',
+          default: 255,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Green',
+          id: 'green',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+        {
+          type: 'textinput',
+          label: 'Blue',
+          id: 'blue',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_INTEGER,
+        },
+      ],
+    };
+
+
     // Source commands
     actions.source_hide_v4 = {
       label: 'Hide a time source V4',
@@ -398,6 +468,33 @@ exports.getActions = function getActions() {
       options: [
       ],
     };
+    actions.start_countdown = {
+      label: 'Primary countdown: start',
+      options: [
+        {
+          type: 'textinput',
+          label: 'Timer (seconds)',
+          id: 'secs',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_NUMBER,
+        },
+        {
+          type: 'textinput',
+          label: 'Timer (minutes)',
+          id: 'mins',
+          default: 1,
+          regex: this.REGEX_UNSIGNED_NUMBER,
+        },
+        {
+          type: 'textinput',
+          label: 'Timer (hours)',
+          id: 'hours',
+          default: 0,
+          regex: this.REGEX_UNSIGNED_NUMBER,
+        },
+      ],
+    };
+
     actions.modify_countdown = {
       label: 'Primary countdown: modify',
       options: [
@@ -656,6 +753,48 @@ exports.doAction = function doAction(action) {
       type: 's',
       value: action.options.title,
     },
+    ];
+  }
+
+  if (action.action === "timer_signal_v4") {
+    const red = {
+      type: 'i',
+      value: action.options.red,
+    };
+    const green = {
+      type: 'i',
+      value: action.options.green,
+    };
+    const blue = {
+      type: 'i',
+      value: action.options.blue,
+    };
+    const alpha = {
+      type: 'i',
+      value: action.options.alpha,
+    };
+    addr = `/clock/timer/${action.options.timer}/signal`;
+    payload = [
+      red, green, blue, alpha
+    ];
+  }
+
+  if (action.action === "hardware_signal_v4") {
+    const red = {
+      type: 'i',
+      value: action.options.red,
+    };
+    const green = {
+      type: 'i',
+      value: action.options.green,
+    };
+    const blue = {
+      type: 'i',
+      value: action.options.blue,
+    };
+    addr = `/clock/signal/${action.options.group}`;
+    payload = [
+      red, green, blue
     ];
   }
 

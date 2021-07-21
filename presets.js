@@ -1,6 +1,6 @@
 exports.getPresets = function getPresets() {
   const presets = [];
-  let i;
+  let i, j;
 
   const white = this.rgb(255, 255, 255);
   const black = this.rgb(0, 0, 0);
@@ -34,6 +34,27 @@ exports.getPresets = function getPresets() {
     this.rgb(70, 107, 128),
     this.rgb(138, 153, 163),
   ];
+  const signalColors = [
+    [255, 0, 0],
+    [255, 165, 0],
+    [255, 255, 0],
+    [0, 255, 0],
+    [0, 0, 255],
+    [75, 0, 130],
+    [238, 130, 238],
+    [255, 255, 255],
+  ];
+  const signalTextColors = [
+    white,
+    white,
+    black,
+    black,
+    white,
+    white,
+    white,
+    black,
+  ];
+
 
   if (this.config.version === '4' || this.config.version === 'mixed') {
     for (i = 0; i < timerColors.length; i++) {
@@ -375,6 +396,57 @@ exports.getPresets = function getPresets() {
           },
         ],
       });
+
+      for (j = 0; j < signalColors.length; j++) {
+        presets.push({
+          category: `Timer ${i} signal color`,
+          label: `Signal ${i}`,
+          bank: {
+            style: 'text',
+            text: `Signal ${i}`,
+            size: 18,
+            color: signalTextColors[j],
+            bgcolor: this.rgb(signalColors[j][0], signalColors[j][1], signalColors[j][2]),
+          },
+          actions: [
+          {
+            action: 'timer_signal_v4',
+            options: {
+              timer: `${i}`,
+              red: signalColors[j][0],
+              green: signalColors[j][1],
+              blue: signalColors[j][2],
+              alpha: 255,
+            }
+          }
+          ],
+        });
+      }
+      // End of signal color loop
+      presets.push({
+        category: `Timer ${i} signal color`,
+        label: `Signal ${i} off`,
+        bank: {
+          style: 'text',
+          text: `Signal ${i} off`,
+          size: 18,
+          color: white,
+          bgcolor: black,
+        },
+        actions: [
+        {
+          action: 'timer_signal_v4',
+          options: {
+            timer: `${i}`,
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 0,
+          }
+        }
+        ],
+      });
+
     }
     // End of timer preset loop
 
@@ -767,6 +839,59 @@ exports.getPresets = function getPresets() {
       });
     }
   }
+
+  // Hardware signal groups
+  for (i = 1; i < 11; i++) {
+    for (j = 0; j < signalColors.length; j++) {
+        presets.push({
+        category: `Hardware signal colors`,
+        label: `Group ${i}`,
+        bank: {
+          style: 'text',
+          text: `Group ${i}`,
+          size: 18,
+          color: signalTextColors[j],
+          bgcolor: this.rgb(signalColors[j][0], signalColors[j][1], signalColors[j][2]),
+        },
+        actions: [
+        {
+          action: 'hardware_signal_v4',
+          options: {
+            timer: `${i}`,
+            red: signalColors[j][0],
+            green: signalColors[j][1],
+            blue: signalColors[j][2],
+          }
+        }
+        ],
+      });
+    }
+    // End of signal color loop
+    presets.push({
+      category: `Hardware signal colors`,
+      label: `Group ${i} off`,
+      bank: {
+        style: 'text',
+        text: `Group ${i} off`,
+        size: 18,
+        color: white,
+        bgcolor: black,
+      },
+      actions: [
+      {
+        action: 'hardware_signal_v4',
+        options: {
+          timer: `${i}`,
+          red: 0,
+          green: 0,
+          blue: 0,
+        }
+      }
+      ],
+    });
+  }
+
+
   // End of V4 presets
 
   if (this.config.version === '3' || this.config.version === 'mixed') {
