@@ -857,7 +857,7 @@ exports.getPresets = function getPresets() {
         {
           action: 'hardware_signal_v4',
           options: {
-            timer: `${i}`,
+            group: `${i}`,
             red: signalColors[j][0],
             green: signalColors[j][1],
             blue: signalColors[j][2],
@@ -881,7 +881,7 @@ exports.getPresets = function getPresets() {
       {
         action: 'hardware_signal_v4',
         options: {
-          timer: `${i}`,
+          group: `${i}`,
           red: 0,
           green: 0,
           blue: 0,
