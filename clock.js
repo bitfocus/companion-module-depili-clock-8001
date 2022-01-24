@@ -372,6 +372,11 @@ class instance extends instance_skel {
         hours = parts[0];
         mins = parts[1];
         secs = parts[2];
+      } else if (parts.length === 2) {
+        icon = this.feedbackState.timers[timer].icon;
+        hours = '';
+        mins = parts[0];
+        secs = parts[1];
       } else {
         hours = '';
         mins = '';
