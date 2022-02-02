@@ -18,5 +18,13 @@
 	"license": "MIT",
 	"dependencies": {
 		"osc": "^2.4.1"
+	},
+	"homepage": "https://github.com/bitfocus/companion-module-depili-clock-8001#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-depili-clock-8001/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-depili-clock-8001.git"
 	}
 }
