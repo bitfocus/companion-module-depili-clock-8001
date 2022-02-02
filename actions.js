@@ -1069,6 +1069,6 @@ exports.doAction = function doAction(action) {
 
   // Send the message
   if (addr !== '') {
-    this.system.emit('osc_send', this.config.host, this.config.port, addr, payload);
+    this.oscSend(this.config.host, this.config.port, addr, payload);
   }
 };
