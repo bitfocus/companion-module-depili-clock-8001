@@ -1,30 +1,27 @@
 {
 	"name": "depili-clock-8001",
-	"version": "5.2.4",
-	"api_version": "1.0.0",
-	"keywords": [
-		"Timing",
-		"Clock"
-	],
-	"manufacturer": "Depili",
-	"product": "Clock-8001",
-	"shortname": "clock-8001",
-	"description": "Clock 8001 real time clock and stage timer",
-	"main": "clock.js",
+	"version": "6.0.0",
+	"main": "dist/clock.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "rimraf dist && yarn build:main",
+		"build:main": "tsc",
+		"dev": "tsc --watch",
+		"format": "prettier -w ."
 	},
-	"author": "Vesa-Pekka Palmu",
 	"license": "MIT",
 	"dependencies": {
-		"osc": "^2.4.1"
-	},
-	"homepage": "https://github.com/bitfocus/companion-module-depili-clock-8001#readme",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-depili-clock-8001/issues"
+		"@companion-module/base": "~1.4",
+		"osc": "^2.4.4"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-depili-clock-8001.git"
-	}
+	},
+	"devDependencies": {
+		"@companion-module/tools": "^1.3.2",
+		"rimraf": "^3.0.2",
+		"typescript": "~4.9"
+	},
+	"prettier": "@companion-module/tools/.prettierrc.json"
 }
