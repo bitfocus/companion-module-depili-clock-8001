@@ -27,6 +27,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
         label: 'Clock IP address (you can also use broadcast)',
         width: 8,
         regex: Regex.IP,
+        default: '255.255.255.255',
       },
       {
         type: 'textinput',
