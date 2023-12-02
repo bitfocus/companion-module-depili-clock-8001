@@ -21,6 +21,7 @@ jobs:
           # try and avoid timeout errors
           yarn config set network-timeout 100000 -g
 
-          yarn install
+          yarn install --frozen-lockfile
 
+          yarn build
           yarn companion-module-build
