@@ -2,6 +2,8 @@ name: Build binaries
 on: [push]
 
 jobs:
+  build:
+    name: Build package
     runs-on: ubuntu-20.04
     outputs:
       version: pkg.tgz
