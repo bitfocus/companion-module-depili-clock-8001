@@ -21,6 +21,6 @@ jobs:
           # try and avoid timeout errors
           yarn config set network-timeout 100000 -g
 
-          yarn update
+          yarn install
 
           yarn companion-module-build
