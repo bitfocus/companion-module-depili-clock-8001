@@ -748,7 +748,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 	// End of V3 presets
 
 	// Common presets
-	presets['sync'] = presetButton('Syn', 'Sync time', `Sync clock`, white, combineRgb(88, 23, 88), {
+	presets['sync'] = presetButton('Sync', 'Sync time', `Sync clock`, white, combineRgb(88, 23, 88), {
 		actionId: 'sync_time',
 		options: {},
 	})
