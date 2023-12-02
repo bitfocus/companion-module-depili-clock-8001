@@ -19,7 +19,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
           { id: '3', label: 'Version 3' },
           { id: 'mixed', label: 'Versions 3 & 4, not recommended' },
         ],
-		default: 1,
+		default: '4',
       },
       {
         type: 'textinput',
