@@ -1,0 +1,24 @@
+name: Build binaries
+on: [push]
+
+jobs:
+    runs-on: ubuntu-20.04
+    outputs:
+      version: pkg.tgz
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.17'
+
+      - name: build & package
+        run: |
+          # try and avoid timeout errors
+          yarn config set network-timeout 100000 -g
+
+          yarn update
+
+          yarn companion-module-build
