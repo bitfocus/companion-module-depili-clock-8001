@@ -5,8 +5,6 @@ jobs:
   build:
     name: Build package
     runs-on: ubuntu-20.04
-    outputs:
-      version: pkg.tgz
     steps:
       - uses: actions/checkout@v3
         with:
@@ -25,3 +23,9 @@ jobs:
 
           yarn build
           yarn companion-module-build
+
+      - name: Archive module package
+        uses: actions/upload-artifact@v3
+        with:
+          name: Companion module archive
+          path: pkg.tgz
