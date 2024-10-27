@@ -71,10 +71,15 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 
 	setActions() {
 		const sendOscMessage = (path: string, args: OSCSomeArguments) => {
-			if (!this.config.host || !this.config.port) {
-				return
+			if (this.config.host && this.config.port) {
+				this.oscSend(this.config.host, parseInt(this.config.port), path, args)
 			}
-			this.oscSend(this.config.host, parseInt(this.config.port), path, args)
+			if (this.config.host2 && this.config.port2) {
+				this.oscSend(this.config.host2, parseInt(this.config.port2), path, args)
+			}
+			if (this.config.host3 && this.config.port3) {
+				this.oscSend(this.config.host3, parseInt(this.config.port3), path, args)
+			}
 		}
 		this.setActionDefinitions(getActions(this.config, sendOscMessage))
 	}
