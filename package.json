@@ -1,28 +1,49 @@
 {
 	"name": "depili-clock-8001",
-	"version": "6.2.0",
+	"version": "6.2.1",
 	"main": "dist/clock.js",
 	"scripts": {
+		"format": "prettier -w .",
+		"package": "run build && companion-module-build",
+		"build": "rimraf dist && run build:main",
+		"build:main": "tsc -p tsconfig.build.json",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "rimraf dist && yarn build:main",
-		"build:main": "tsc",
-		"dev": "tsc --watch",
-		"format": "prettier -w ."
+		"dev": "tsc -p tsconfig.build.json --watch",
+		"lint:raw": "eslint",
+		"lint": "run lint:raw ."
 	},
 	"license": "MIT",
-	"dependencies": {
-		"@companion-module/base": "~1.4",
-		"osc": "^2.4.5"
-	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-depili-clock-8001.git"
 	},
+	"engines": {
+		"node": "^22.20",
+		"yarn": "^4"
+	},
+	"dependencies": {
+		"@companion-module/base": "~1.12.1",
+		"osc": "^2.4.5"
+	},
 	"devDependencies": {
-		"@companion-module/tools": "^1.3.2",
-		"rimraf": "^3.0.2",
-		"typescript": "~4.9"
+		"@companion-module/tools": "^2.4.2",
+		"@types/node": "^22.18.13",
+		"eslint": "^9.39.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.2.6",
+		"prettier": "^3.6.2",
+		"rimraf": "^6.1.0",
+		"typescript": "~5.8.3",
+		"typescript-eslint": "^8.46.2"
 	},
 	"prettier": "@companion-module/tools/.prettierrc.json",
-	"packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+	"lint-staged": {
+		"*.{css,json,md,scss}": [
+			"prettier --write"
+		],
+		"*.{ts,tsx,js,jsx}": [
+			"yarn lint:raw --fix"
+		]
+	},
+	"packageManager": "yarn@4.10.3"
 }
