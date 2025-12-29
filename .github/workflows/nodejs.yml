@@ -10,20 +10,22 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.17'
-
+          node-version: '22.x'
+      - name: Prepare Environment
+        run: |
+          corepack enable
+      - name: Prepare module
+        run: |
+          yarn install
+        env:
+          CI: true
       - name: build & package
         run: |
           # try and avoid timeout errors
-          yarn config set network-timeout 100000 -g
-
-          yarn install --frozen-lockfile
-
           yarn build
           yarn companion-module-build
-
       - name: Archive module package
         uses: actions/upload-artifact@v4
         with:
