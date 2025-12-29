@@ -25,7 +25,7 @@ jobs:
           yarn companion-module-build
 
       - name: Archive module package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Companion module archive
           path: pkg.tgz
