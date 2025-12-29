@@ -6,7 +6,7 @@ import {
 	combineRgb,
 	splitRgb,
 } from '@companion-module/base'
-import { ClockConfig } from './config'
+import { ClockConfig } from './config.js'
 
 export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 	const presets: CompanionPresetDefinitions = {}
