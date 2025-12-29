@@ -93,7 +93,6 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 
 	async init(config: ClockConfig) {
 		this.log('info', 'Starting initialization')
-		debugger
 		this.config = config
 		this.init_variables()
 		this.setActions()
@@ -329,7 +328,7 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 	}
 
 	init_osc() {
-		this.log("info", "Starting OSC listener")
+		this.log('info', 'Starting OSC listener')
 
 		const statePattern = /^\/clock\/(timer|source)\/([0-9])\/state/
 		const timerPattern = /^\/clock\/timer\/([0-9])\/state/
@@ -344,9 +343,9 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 		})
 
 		this.listener.on('error', (_error: any) => {
-			this.log("error", "OSC received low level error, retrying after timeout")
+			this.log('error', 'OSC received low level error, retrying after timeout')
 			setTimeout(() => {
-			this.init_osc()
+				this.init_osc()
 			}, 5000)
 		})
 

@@ -52,7 +52,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 		color: number,
 		bgColor: number,
 		action?: CompanionPresetAction,
-		feedback?: CompanionPresetFeedback
+		feedback?: CompanionPresetFeedback,
 	): CompanionButtonPresetDefinition {
 		const btn: CompanionButtonPresetDefinition = {
 			type: 'button',
@@ -101,7 +101,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 		i: number,
 		name: string,
 		buttonText: string,
-		action?: CompanionPresetAction
+		action?: CompanionPresetAction,
 	): CompanionButtonPresetDefinition {
 		return presetButton(`Timer ${i}`, name, buttonText, timerTextColors[i], timerColors[i], action)
 	}
@@ -110,7 +110,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 		i: number,
 		name: string,
 		buttonText: string,
-		action?: CompanionPresetAction
+		action?: CompanionPresetAction,
 	): CompanionButtonPresetDefinition {
 		return presetButton(`Source ${i}`, name, buttonText, white, sourceColors[i - 1], action)
 	}
@@ -310,7 +310,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 			{
 				actionId: 'hide_sources_v4',
 				options: {},
-			}
+			},
 		)
 
 		presets['show_all_sources'] = presetButton(
@@ -322,7 +322,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 			{
 				actionId: 'show_sources_v4',
 				options: {},
-			}
+			},
 		)
 
 		// Misc commands
@@ -344,7 +344,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 			{
 				actionId: 'resume_timers',
 				options: {},
-			}
+			},
 		)
 
 		// Text presets
@@ -382,7 +382,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					options: {
 						bg: i,
 					},
-				}
+				},
 			)
 		}
 
@@ -403,7 +403,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 							green: signalColors[j][1],
 							blue: signalColors[j][2],
 						},
-					}
+					},
 				)
 			}
 			// End of signal color loop
@@ -422,7 +422,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 						green: 0,
 						blue: 0,
 					},
-				}
+				},
 			)
 		}
 	}
@@ -444,7 +444,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					mins: '5',
 					hours: '0',
 				},
-			}
+			},
 		)
 
 		presets[`timer1_10min`] = presetButton(
@@ -460,7 +460,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					mins: '10',
 					hours: '0',
 				},
-			}
+			},
 		)
 
 		presets[`timer1_30min`] = presetButton(
@@ -476,7 +476,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					mins: '30',
 					hours: '0',
 				},
-			}
+			},
 		)
 
 		presets[`timer1_stop`] = presetButton('Timer control', 'Stop', `Stop`, white, combineRgb(0, 0, 255), {
@@ -514,7 +514,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					mins: '5',
 					hours: '0',
 				},
-			}
+			},
 		)
 
 		presets[`timer2_10min`] = presetButton(
@@ -530,7 +530,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					mins: '10',
 					hours: '0',
 				},
-			}
+			},
 		)
 
 		presets[`timer2_30min`] = presetButton(
@@ -546,7 +546,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					mins: '30',
 					hours: '0',
 				},
-			}
+			},
 		)
 
 		presets[`timer2_stop`] = presetButton('Timer 2 control', 'Stop', `Stop`, white, combineRgb(0, 0, 255), {
@@ -595,7 +595,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					off_fg: combineRgb(255, 255, 255),
 					off_bg: combineRgb(0, 0, 255),
 				},
-			}
+			},
 		)
 
 		presets[`timeofday`] = presetButton(
@@ -622,7 +622,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					off_fg: combineRgb(255, 128, 0),
 					off_bg: combineRgb(0, 0, 0),
 				},
-			}
+			},
 		)
 
 		presets[`count_up`] = presetButton(
@@ -649,7 +649,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					off_fg: combineRgb(255, 128, 0),
 					off_bg: combineRgb(0, 0, 0),
 				},
-			}
+			},
 		)
 
 		presets[`pause`] = presetButton(
@@ -670,7 +670,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					paused_fg: combineRgb(255, 255, 255),
 					paused_bg: combineRgb(0, 0, 255),
 				},
-			}
+			},
 		)
 		presets[`resume`] = presetButton(
 			'Mode',
@@ -690,7 +690,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					paused_fg: combineRgb(255, 255, 255),
 					paused_bg: combineRgb(0, 0, 255),
 				},
-			}
+			},
 		)
 
 		presets[`hide_sec`] = presetButton('Mode', 'Hide seconds', 'Hide secs', combineRgb(255, 128, 0), black, {
@@ -742,7 +742,7 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 					paused_fg: combineRgb(255, 255, 255),
 					paused_bg: combineRgb(0, 0, 255),
 				},
-			}
+			},
 		)
 	}
 	// End of V3 presets

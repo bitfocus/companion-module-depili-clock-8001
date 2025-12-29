@@ -9,7 +9,6 @@ import {
 } from '@companion-module/base'
 import { ClockConfig } from './config'
 
-
 // Helper functions
 const getInt = async (val: InputValue | undefined, context: any): Promise<number> => {
 	if (typeof val == 'number') {
@@ -55,7 +54,7 @@ const rgbPayload = async (options: CompanionOptionValues, context: any): Promise
 
 const rgbaPayload = async (options: CompanionOptionValues, context: any): Promise<OSCMetaArgument[]> => {
 	return [
-		...await rgbPayload(options, context),
+		...(await rgbPayload(options, context)),
 		{
 			type: 'i',
 			value: await getInt(options.alpha, context),
@@ -100,10 +99,10 @@ const floatPayload = async (par: InputValue | undefined, context: any): Promise<
 
 const stringPayload = async (par: InputValue | undefined, context: any): Promise<OSCMetaArgument> => {
 	if (typeof par == 'number') {
-		return { type: 's', value: par.toString()}
+		return { type: 's', value: par.toString() }
 	}
 	if (typeof par != 'string') {
-		return { type: 's', value: "" }
+		return { type: 's', value: '' }
 	}
 	const parsedValue = await context.parseVariablesInString(par)
 	return {
@@ -244,7 +243,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			],
 			callback: async (event, context) => {
 				const addr = `/clock/timer/${event.options.timer}/countdown/target`
-				const payload: OSCSomeArguments = [await stringPayload(event.options.target, context),]
+				const payload: OSCSomeArguments = [await stringPayload(event.options.target, context)]
 				oscSend(addr, payload)
 			},
 		}
@@ -270,7 +269,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			],
 			callback: async (event, context) => {
 				const addr = `/clock/timer/${event.options.timer}/countup/target`
-				const payload: OSCSomeArguments = [await stringPayload(event.options.target, context),]
+				const payload: OSCSomeArguments = [await stringPayload(event.options.target, context)]
 				oscSend(addr, payload)
 			},
 		}
@@ -320,7 +319,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			options: [timerNumberOption, ...rgbaOptions],
 			callback: async (event, context) => {
 				const addr = `/clock/timer/${event.options.timer}/signal`
-				const payload: OSCSomeArguments = [...await rgbaPayload(event.options, context)]
+				const payload: OSCSomeArguments = [...(await rgbaPayload(event.options, context))]
 				oscSend(addr, payload)
 			},
 		}
@@ -339,7 +338,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			],
 			callback: async (event, context) => {
 				const addr = `/clock/signal/${event.options.group}`
-				const payload: OSCSomeArguments = [...await rgbPayload(event.options, context)]
+				const payload: OSCSomeArguments = [...(await rgbPayload(event.options, context))]
 				oscSend(addr, payload)
 			},
 		}
@@ -377,7 +376,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			],
 			callback: async (event, context) => {
 				const addr = `/clock/timer/${event.options.source}/title`
-				const payload: OSCSomeArguments = [await stringPayload(event.options.title, context),]
+				const payload: OSCSomeArguments = [await stringPayload(event.options.title, context)]
 				oscSend(addr, payload)
 			},
 		}
@@ -387,7 +386,10 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			options: [sourceOption, ...rgbaOptions, ...bgRgbaOptions],
 			callback: async (event, context) => {
 				const addr = `/clock/timer/${event.options.source}/colors`
-				const payload: OSCSomeArguments = [...await rgbaPayload(event.options, context), ...await bgRgbaPayload(event.options, context)]
+				const payload: OSCSomeArguments = [
+					...(await rgbaPayload(event.options, context)),
+					...(await bgRgbaPayload(event.options, context)),
+				]
 				oscSend(addr, payload)
 			},
 		}
@@ -397,7 +399,10 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			options: [...rgbaOptions, ...bgRgbaOptions],
 			callback: async (event, context) => {
 				const addr = `/clock/titlecolors`
-				const payload: OSCSomeArguments = [...await rgbaPayload(event.options, context), ...await bgRgbaPayload(event.options, context)]
+				const payload: OSCSomeArguments = [
+					...(await rgbaPayload(event.options, context)),
+					...(await bgRgbaPayload(event.options, context)),
+				]
 				oscSend(addr, payload)
 			},
 		}
@@ -490,8 +495,8 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			callback: async (event, context) => {
 				const addr = `/clock/text`
 				const payload: OSCSomeArguments = [
-					...await rgbaPayload(event.options, context),
-					...await bgRgbaPayload(event.options, context),
+					...(await rgbaPayload(event.options, context)),
+					...(await bgRgbaPayload(event.options, context)),
 					{
 						type: 'i',
 						value: event.options.duration as number,
