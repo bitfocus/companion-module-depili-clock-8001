@@ -7,10 +7,10 @@ import {
 } from '@companion-module/base'
 import OSC from 'osc'
 
-import { ClockConfig, GetConfigFields } from './config'
-import { getActions } from './actions'
-import { getFeedbacks } from './feedback'
-import { getPresets } from './presets'
+import { ClockConfig, GetConfigFields } from './config.js'
+import { getActions } from './actions.js'
+import { getFeedbacks } from './feedback.js'
+import { getPresets } from './presets.js'
 
 class ClockInstance extends InstanceBase<ClockConfig> {
 	private config: ClockConfig

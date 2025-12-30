@@ -7,7 +7,7 @@ import {
 	Regex,
 	SomeCompanionActionInputField,
 } from '@companion-module/base'
-import { ClockConfig } from './config'
+import { ClockConfig } from './config.js'
 
 // Helper functions
 const getInt = async (val: InputValue | undefined, context: any): Promise<number> => {
