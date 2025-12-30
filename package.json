@@ -2,12 +2,13 @@
 	"name": "depili-clock-8001",
 	"version": "6.2.1",
 	"main": "dist/clock.js",
+	"type": "module",
 	"scripts": {
+		"postinstall": "husky",
 		"format": "prettier -w .",
 		"package": "run build && companion-module-build",
 		"build": "rimraf dist && run build:main",
 		"build:main": "tsc -p tsconfig.build.json",
-		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "tsc -p tsconfig.build.json --watch",
 		"lint:raw": "eslint",
 		"lint": "run lint:raw ."
