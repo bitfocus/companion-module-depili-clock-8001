@@ -1,6 +1,6 @@
 {
 	"name": "depili-clock-8001",
-	"version": "6.2.1",
+	"version": "6.2.2",
 	"main": "dist/clock.js",
 	"type": "module",
 	"scripts": {
