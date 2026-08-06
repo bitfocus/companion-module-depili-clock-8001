@@ -120,7 +120,12 @@ const boolPayload = (value: InputValue | undefined): OSCMetaArgument => {
 }
 
 type sendOscMessage = (path: string, args: OSCSomeArguments) => void
-export function getActions(config: ClockConfig, oscSend: sendOscMessage): CompanionActionDefinitions {
+export function getActions(
+	config: ClockConfig,
+	oscSend: sendOscMessage,
+	getState: () => ClockState,
+	setCueState: (cue: string) => void,
+): CompanionActionDefinitions {
 	const actions: CompanionActionDefinitions = {}
 
 	// Common options
@@ -561,6 +566,57 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			callback: async (event) => {
 				const payload: OSCSomeArguments = [boolPayload(event.options.state)]
 				oscSend('/clock/automation', payload)
+			},
+		}
+
+		actions.cue_right_v4 = {
+			name: 'Show right arrow cue V4',
+			options: [],
+			callback: async (_event) => {
+				const payload: OSCSomeArguments = [{ type: 's', value: '' }]
+				oscSend('/clock/cue/right', payload)
+				setCueState('right')
+			},
+		}
+
+		actions.cue_left_v4 = {
+			name: 'Show left arrow cue V4',
+			options: [],
+			callback: async (_event) => {
+				const payload: OSCSomeArguments = [{ type: 's', value: '' }]
+				oscSend('/clock/cue/left', payload)
+				setCueState('left')
+			},
+		}
+
+		actions.cue_blank_v4 = {
+			name: 'Set blank cue V4',
+			options: [
+				{
+					type: 'checkbox',
+					label: 'Blank cue active',
+					id: 'state',
+					default: true,
+				},
+			],
+			callback: async (event) => {
+				const active = Boolean(event.options.state)
+				const payload: OSCSomeArguments = [{ type: 's', value: '' }, boolPayload(active)]
+				oscSend('/clock/cue/blank', payload)
+				setCueState(active ? 'blank' : 'none')
+			},
+		}
+
+		actions.cue_blank_toggle_v4 = {
+			name: 'Toggle blank cue V4',
+			options: [],
+			callback: async (_event) => {
+				// Sense the currently tracked cue state (kept in sync from the clock's own /clock/cue/blank
+				// broadcasts, however they were triggered - by us, or another console/panel) and flip it.
+				const active = getState().cue === 'blank'
+				const payload: OSCSomeArguments = [{ type: 's', value: '' }, boolPayload(!active)]
+				oscSend('/clock/cue/blank', payload)
+				setCueState(!active ? 'blank' : 'none')
 			},
 		}
 	}

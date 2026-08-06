@@ -28,6 +28,10 @@ interface ClockState {
 	uuid: string
 	timestamp: number
 	state: string
+	// Last known cue state, tracked from the clock's own /clock/cue/* broadcasts: 'none' | 'left' | 'right' | 'blank'
+	cue: string
+	// Timestamp (Date.now()) of the last cue state change, used to fade out the left/right cue highlight
+	cueTimestamp: number
 }
 
 interface StateMap {
