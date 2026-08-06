@@ -12,10 +12,17 @@ import { getActions } from './actions.js'
 import { getFeedbacks } from './feedback.js'
 import { getPresets } from './presets.js'
 
+// How long the left/right cue highlight takes to fade back out, in milliseconds
+const CUE_FADE_MS = 2000
+// How often to re-check the blank cue feedback while active, so an optional blink can animate
+const CUE_BLINK_TICK_MS = 250
+
 class ClockInstance extends InstanceBase<ClockConfig> {
 	private config: ClockConfig
 	private feedbackState: ClockState
 	private listener: any // OSC
+	private cueFadeInterval?: ReturnType<typeof setInterval>
+	private cueBlinkInterval?: ReturnType<typeof setInterval>
 
 	constructor(internal: unknown) {
 		super(internal)
@@ -34,6 +41,8 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 			uuid: '',
 			timestamp: Date.now(),
 			state: '0',
+			cue: 'none',
+			cueTimestamp: 0,
 		}
 
 		for (i = 0; i < 10; i++) {
@@ -81,7 +90,49 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 				this.oscSend(this.config.host3, parseInt(this.config.port3), path, args)
 			}
 		}
-		this.setActionDefinitions(getActions(this.config, sendOscMessage))
+		this.setActionDefinitions(
+			getActions(
+				this.config,
+				sendOscMessage,
+				() => this.feedbackState,
+				(cue) => this.setCueState(cue),
+			),
+		)
+	}
+
+	// Update the tracked cue state and, for the momentary left/right arrow cues, fade the highlight back out
+	setCueState(cue: string) {
+		this.feedbackState.cue = cue
+		this.feedbackState.cueTimestamp = Date.now()
+		this.checkFeedbacks('cue_left_active', 'cue_right_active', 'cue_blank_active')
+
+		if (this.cueFadeInterval) {
+			clearInterval(this.cueFadeInterval)
+			this.cueFadeInterval = undefined
+		}
+
+		if (cue === 'left' || cue === 'right') {
+			this.cueFadeInterval = setInterval(() => {
+				if (Date.now() - this.feedbackState.cueTimestamp >= CUE_FADE_MS) {
+					this.feedbackState.cue = 'none'
+					clearInterval(this.cueFadeInterval)
+					this.cueFadeInterval = undefined
+				}
+				this.checkFeedbacks('cue_left_active', 'cue_right_active')
+			}, 100)
+		}
+
+		if (this.cueBlinkInterval) {
+			clearInterval(this.cueBlinkInterval)
+			this.cueBlinkInterval = undefined
+		}
+
+		// Re-check periodically while blank is active, so a feedback instance with 'Blink' enabled can animate
+		if (cue === 'blank') {
+			this.cueBlinkInterval = setInterval(() => {
+				this.checkFeedbacks('cue_blank_active')
+			}, CUE_BLINK_TICK_MS)
+		}
 	}
 
 	async configUpdated(config: ClockConfig) {
@@ -333,6 +384,9 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 		const statePattern = /^\/clock\/(timer|source)\/([0-9])\/state/
 		const timerPattern = /^\/clock\/timer\/([0-9])\/state/
 		const sourcePattern = /^\/clock\/source\/([1-4])\/state/
+		const cueRightPattern = /^\/clock\/cue\/right$/
+		const cueLeftPattern = /^\/clock\/cue\/left$/
+		const cueBlankPattern = /^\/clock\/cue\/blank$/
 		if (this.listener) {
 			this.listener.close()
 		}
@@ -373,6 +427,15 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 					this.updateLegacyState()
 					this.checkFeedbacks('pause_color')
 				}
+			}
+
+			// Cue messages, sent and received by the clocks to stay in sync
+			if (message.address.match(cueRightPattern)) {
+				this.setCueState('right')
+			} else if (message.address.match(cueLeftPattern)) {
+				this.setCueState('left')
+			} else if (message.address.match(cueBlankPattern) && message.args.length >= 2) {
+				this.setCueState(message.args[1].value ? 'blank' : 'none')
 			}
 
 			// V4 state messages
@@ -427,6 +490,12 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 	async destroy() {
 		if (this.listener) {
 			this.listener.close()
+		}
+		if (this.cueFadeInterval) {
+			clearInterval(this.cueFadeInterval)
+		}
+		if (this.cueBlinkInterval) {
+			clearInterval(this.cueBlinkInterval)
 		}
 	}
 }

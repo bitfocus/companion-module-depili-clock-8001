@@ -399,6 +399,53 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 			},
 		)
 
+		// Cues
+		presets['cue_left'] = presetButton(
+			'Cues',
+			'Cue left',
+			'◀',
+			combineRgb(200, 0, 0),
+			black,
+			{
+				actionId: 'cue_left_v4',
+				options: {},
+			},
+			{
+				feedbackId: 'cue_left_active',
+				options: {},
+			},
+		)
+		presets['cue_right'] = presetButton(
+			'Cues',
+			'Cue right',
+			'▶',
+			combineRgb(0, 153, 0),
+			black,
+			{
+				actionId: 'cue_right_v4',
+				options: {},
+			},
+			{
+				feedbackId: 'cue_right_active',
+				options: {},
+			},
+		)
+		presets['cue_blank'] = presetButton(
+			'Cues',
+			'Toggle blank cue',
+			'⬤',
+			combineRgb(255, 255, 0),
+			black,
+			{
+				actionId: 'cue_blank_toggle_v4',
+				options: {},
+			},
+			{
+				feedbackId: 'cue_blank_active',
+				options: { blink: true },
+			},
+		)
+
 		// Text presets
 		presets['text_wrapup'] = textButton('Wrap up', 'Wrap\\nup', combineRgb(255, 0, 0), black)
 		presets['text_stop'] = textButton('Please stop', 'Please\\nstop', combineRgb(255, 0, 0), black)
