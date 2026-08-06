@@ -268,16 +268,23 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 			}
 			// End of signal color loop
 
-			presetButton(`Timer ${i} signal color`, `Signal ${i} off`, `Signal ${i} off`, white, black, {
-				actionId: 'timer_signal_v4',
-				options: {
-					timer: `${i}`,
-					red: 0,
-					green: 0,
-					blue: 0,
-					alpha: 0,
+			presets[`timer_${i}_signal_off`] = presetButton(
+				`Timer ${i} signal color`,
+				`Signal ${i} off`,
+				`Signal ${i} off`,
+				white,
+				black,
+				{
+					actionId: 'timer_signal_v4',
+					options: {
+						timer: `${i}`,
+						red: 0,
+						green: 0,
+						blue: 0,
+						alpha: 0,
+					},
 				},
-			})
+			)
 		}
 		// End of timer preset loop
 
