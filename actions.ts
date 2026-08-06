@@ -146,6 +146,11 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			regex: Regex.NUMBER,
 		},
 	]
+	// Same as timeOptions, but allowing a leading +/- for actions that add or subtract time rather than set it
+	const signedTimeOptions: SomeCompanionActionInputField[] = timeOptions.map((option) => ({
+		...option,
+		regex: Regex.SIGNED_NUMBER,
+	}))
 	const sourceOption: SomeCompanionActionInputField = {
 		type: 'textinput',
 		label: 'Source number',
@@ -276,7 +281,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 
 		actions.timer_modify_v4 = {
 			name: 'Modify a running timer V4',
-			options: [timerNumberOption, ...timeOptions],
+			options: [timerNumberOption, ...signedTimeOptions],
 			callback: async (event, context) => {
 				const addr = `/clock/timer/${event.options.timer}/modify`
 				const payload: OSCSomeArguments = [await timePayload(event.options, context)]
@@ -557,7 +562,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 
 		actions.modify_countdown = {
 			name: 'Primary countdown: modify',
-			options: [...timeOptions],
+			options: [...signedTimeOptions],
 			callback: async (event, context) => {
 				const addr = `/clock/countdown/modify`
 				const payload: OSCSomeArguments = [await timePayload(event.options, context)]
@@ -584,7 +589,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 
 		actions.modify_countdown2 = {
 			name: 'Secondary countdown: modify',
-			options: [...timeOptions],
+			options: [...signedTimeOptions],
 			callback: async (event, context) => {
 				const addr = `/clock/countdown2/modify`
 				const payload: OSCSomeArguments = [await timePayload(event.options, context)]
