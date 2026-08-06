@@ -111,6 +111,14 @@ const stringPayload = async (par: InputValue | undefined, context: any): Promise
 	}
 }
 
+// OSCMetaArgument (from @companion-module/base) only declares the 'i' | 'f' | 's' | 'b' OSC types,
+// but the clock expects real OSC boolean arguments (type tags 'T'/'F', no value bytes) for options
+// like checkboxes. The underlying transport supports this, so we cast around the narrow declared type.
+const boolPayload = (value: InputValue | undefined): OSCMetaArgument => {
+	const v = typeof value === 'boolean' ? value : Boolean(value)
+	return { type: v ? 'T' : 'F' } as unknown as OSCMetaArgument
+}
+
 type sendOscMessage = (path: string, args: OSCSomeArguments) => void
 export function getActions(config: ClockConfig, oscSend: sendOscMessage): CompanionActionDefinitions {
 	const actions: CompanionActionDefinitions = {}
@@ -289,6 +297,16 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			},
 		}
 
+		actions.timer_set_v4 = {
+			name: 'Set a timer to an external state V4',
+			options: [timerNumberOption, ...timeOptions],
+			callback: async (event, context) => {
+				const addr = `/clock/timer/${event.options.timer}/set`
+				const payload: OSCSomeArguments = [await timePayload(event.options, context)]
+				oscSend(addr, payload)
+			},
+		}
+
 		actions.timer_pause_v4 = {
 			name: 'Pause a running timer V4',
 			options: [timerNumberOption],
@@ -314,6 +332,16 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			options: [timerNumberOption],
 			callback: async (event) => {
 				const addr = `/clock/timer/${event.options.timer}/stop`
+				const payload: OSCSomeArguments = []
+				oscSend(addr, payload)
+			},
+		}
+
+		actions.timer_restart_v4 = {
+			name: 'Restart a timer with its last duration V4',
+			options: [timerNumberOption],
+			callback: async (event) => {
+				const addr = `/clock/timer/${event.options.timer}/restart`
 				const payload: OSCSomeArguments = []
 				oscSend(addr, payload)
 			},
@@ -509,6 +537,30 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 					await stringPayload(event.options.text, context),
 				]
 				oscSend(addr, payload)
+			},
+		}
+
+		actions.flash_v4 = {
+			name: 'Flash the screen V4',
+			options: [],
+			callback: async (_event) => {
+				oscSend('/clock/flash', [])
+			},
+		}
+
+		actions.automation_v4 = {
+			name: 'Set hardware signal automation V4',
+			options: [
+				{
+					type: 'checkbox',
+					label: 'Automation enabled',
+					id: 'state',
+					default: true,
+				},
+			],
+			callback: async (event) => {
+				const payload: OSCSomeArguments = [boolPayload(event.options.state)]
+				oscSend('/clock/automation', payload)
 			},
 		}
 	}
