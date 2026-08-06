@@ -180,6 +180,23 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 				},
 			})
 
+			presets[`timer_${i}_restart`] = timerButton(i, 'Restart timer', `Restart`, {
+				actionId: 'timer_restart_v4',
+				options: {
+					timer: `${i}`,
+				},
+			})
+
+			presets[`timer_${i}_set_zero`] = timerButton(i, 'Set timer display to 0', `Set\\n0:00`, {
+				actionId: 'timer_set_v4',
+				options: {
+					timer: `${i}`,
+					secs: '0',
+					mins: '0',
+					hours: '0',
+				},
+			})
+
 			presets[`timer_${i}_add1m`] = timerButton(i, 'Add 1 minute', `+1\\nmin`, {
 				actionId: 'timer_modify_v4',
 				options: {
@@ -354,6 +371,34 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 			},
 		)
 
+		presets['flash'] = presetButton('Misc', 'Flash the screen', 'Flash', black, combineRgb(255, 255, 255), {
+			actionId: 'flash_v4',
+			options: {},
+		})
+
+		presets['automation_on'] = presetButton(
+			'Misc',
+			'Signal automation on',
+			'Auto\\non',
+			black,
+			combineRgb(153, 255, 204),
+			{
+				actionId: 'automation_v4',
+				options: { state: true },
+			},
+		)
+		presets['automation_off'] = presetButton(
+			'Misc',
+			'Signal automation off',
+			'Auto\\noff',
+			white,
+			combineRgb(153, 0, 0),
+			{
+				actionId: 'automation_v4',
+				options: { state: false },
+			},
+		)
+
 		// Text presets
 		presets['text_wrapup'] = textButton('Wrap up', 'Wrap\\nup', combineRgb(255, 0, 0), black)
 		presets['text_stop'] = textButton('Please stop', 'Please\\nstop', combineRgb(255, 0, 0), black)
@@ -377,6 +422,12 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 		})
 
 		// Backgrounds
+		presets['bg_clear'] = presetButton('Backgrounds', 'Clear background', 'BG\\nclear', white, black, {
+			actionId: 'background_v4',
+			options: {
+				bg: 0,
+			},
+		})
 		for (i = 1; i < 11; i++) {
 			presets[`bg_${i}`] = presetButton(
 				'Backgrounds',
