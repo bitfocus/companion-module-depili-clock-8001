@@ -798,16 +798,6 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 			},
 		)
 
-		presets[`hide_sec`] = presetButton('Mode', 'Hide seconds', 'Hide secs', combineRgb(255, 128, 0), black, {
-			actionId: 'seconds_off',
-			options: {},
-		})
-
-		presets[`show_sec`] = presetButton('Mode', 'Show seconds', 'Show secs', combineRgb(255, 128, 0), black, {
-			actionId: 'seconds_on',
-			options: {},
-		})
-
 		function timeButton(text: string, buttonText: string) {
 			return presetButton('Display time', text, buttonText, white, combineRgb(101, 0, 0), undefined, {
 				feedbackId: 'state_color',
@@ -855,6 +845,16 @@ export function getPresets(config: ClockConfig): CompanionPresetDefinitions {
 	// Common presets
 	presets['sync'] = presetButton('Sync', 'Sync time', `Sync clock`, white, combineRgb(88, 23, 88), {
 		actionId: 'sync_time',
+		options: {},
+	})
+
+	presets['hide_sec'] = presetButton('Misc', 'Hide seconds', 'Hide\\nsecs', combineRgb(255, 128, 0), black, {
+		actionId: 'seconds_off',
+		options: {},
+	})
+
+	presets['show_sec'] = presetButton('Misc', 'Show seconds', 'Show\\nsecs', combineRgb(255, 128, 0), black, {
+		actionId: 'seconds_on',
 		options: {},
 	})
 
