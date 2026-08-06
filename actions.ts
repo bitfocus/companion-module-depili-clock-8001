@@ -348,7 +348,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			name: 'Hide a time source V4',
 			options: [sourceOption],
 			callback: async (event) => {
-				const addr = `/clock/timer/${event.options.source}/hide`
+				const addr = `/clock/source/${event.options.source}/hide`
 				const payload: OSCSomeArguments = []
 				oscSend(addr, payload)
 			},
@@ -358,7 +358,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			name: 'Show a time source V4',
 			options: [sourceOption],
 			callback: async (event) => {
-				const addr = `/clock/timer/${event.options.source}/show`
+				const addr = `/clock/source/${event.options.source}/show`
 				const payload: OSCSomeArguments = []
 				oscSend(addr, payload)
 			},
@@ -375,7 +375,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 				},
 			],
 			callback: async (event, context) => {
-				const addr = `/clock/timer/${event.options.source}/title`
+				const addr = `/clock/source/${event.options.source}/title`
 				const payload: OSCSomeArguments = [await stringPayload(event.options.title, context)]
 				oscSend(addr, payload)
 			},
@@ -385,7 +385,7 @@ export function getActions(config: ClockConfig, oscSend: sendOscMessage): Compan
 			name: 'Set source colors V4',
 			options: [sourceOption, ...rgbaOptions, ...bgRgbaOptions],
 			callback: async (event, context) => {
-				const addr = `/clock/timer/${event.options.source}/colors`
+				const addr = `/clock/source/${event.options.source}/colors`
 				const payload: OSCSomeArguments = [
 					...(await rgbaPayload(event.options, context)),
 					...(await bgRgbaPayload(event.options, context)),
