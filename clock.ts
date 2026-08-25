@@ -1,23 +1,27 @@
 import {
-	CompanionVariableDefinition,
 	InstanceBase,
 	InstanceStatus,
-	OSCSomeArguments,
-	runEntrypoint,
+	type CompanionVariableDefinitions,
+	type CompanionVariableValues,
+	type OSCSomeArguments,
+	type SomeCompanionConfigField,
 } from '@companion-module/base'
 import OSC from 'osc'
 
-import { ClockConfig, GetConfigFields } from './config.js'
+import { GetConfigFields, type ClockConfig } from './config.js'
 import { getActions } from './actions.js'
 import { getFeedbacks } from './feedback.js'
 import { getPresets } from './presets.js'
+import type { ClockInstanceTypes } from './types.js'
+
+export { UpgradeScripts } from './upgrades.js'
 
 // How long the left/right cue highlight takes to fade back out, in milliseconds
 const CUE_FADE_MS = 2000
 // How often to re-check the blank cue feedback while active, so an optional blink can animate
 const CUE_BLINK_TICK_MS = 250
 
-class ClockInstance extends InstanceBase<ClockConfig> {
+export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 	private config: ClockConfig
 	private feedbackState: ClockState
 	private listener: any // OSC
@@ -74,11 +78,11 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 	}
 
 	// Return config fields for web config
-	getConfigFields() {
+	getConfigFields(): SomeCompanionConfigField[] {
 		return GetConfigFields()
 	}
 
-	setActions() {
+	setActions(): void {
 		const sendOscMessage = (path: string, args: OSCSomeArguments) => {
 			if (this.config.host && this.config.port) {
 				this.oscSend(this.config.host, parseInt(this.config.port), path, args)
@@ -100,8 +104,13 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 		)
 	}
 
+	setPresets(): void {
+		const { structure, presets } = getPresets(this.config)
+		this.setPresetDefinitions(structure, presets)
+	}
+
 	// Update the tracked cue state and, for the momentary left/right arrow cues, fade the highlight back out
-	setCueState(cue: string) {
+	setCueState(cue: string): void {
 		this.feedbackState.cue = cue
 		this.feedbackState.cueTimestamp = Date.now()
 		this.checkFeedbacks('cue_left_active', 'cue_right_active', 'cue_blank_active')
@@ -135,109 +144,57 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 		}
 	}
 
-	async configUpdated(config: ClockConfig) {
+	async configUpdated(config: ClockConfig): Promise<void> {
 		this.config = config
 		this.setActions()
-		this.setPresetDefinitions(getPresets(this.config))
+		this.setPresets()
 		this.init_osc()
 	}
 
-	async init(config: ClockConfig) {
+	async init(config: ClockConfig): Promise<void> {
 		this.log('info', 'Starting initialization')
 		this.config = config
 		this.init_variables()
 		this.setActions()
-		this.setPresetDefinitions(getPresets(this.config))
+		this.setPresets()
 		this.setFeedbackDefinitions(getFeedbacks(() => this.feedbackState))
 		this.init_osc()
 		this.updateStatus(InstanceStatus.Ok)
 		this.log('info', 'Init done')
 	}
 
-	init_variables() {
+	init_variables(): void {
 		let i: number
-		let variables: CompanionVariableDefinition[] = [
-			{
-				name: 'State of timer (NORMAL, COUNTUP, COUNTDOWN, OFF)',
-				variableId: 'state',
-			},
-			{
-				name: 'Current time of timer (hh:mm:ss)',
-				variableId: 'time',
-			},
-			{
-				name: 'Current time of timer (hh:mm)',
-				variableId: 'time_hm',
-			},
-			{
-				name: 'Current time of timer (hours)',
-				variableId: 'time_h',
-			},
-			{
-				name: 'Current time of timer (minutes)',
-				variableId: 'time_m',
-			},
-			{
-				name: 'Current time of timer (seconds)',
-				variableId: 'time_s',
-			},
-			{
-				name: 'Current tally text',
-				variableId: 'tally',
-			},
-			{
-				name: 'Pause state',
-				variableId: 'paused',
-			},
-		]
+		const variables: CompanionVariableDefinitions<CompanionVariableValues> = {
+			state: { name: 'State of timer (NORMAL, COUNTUP, COUNTDOWN, OFF)' },
+			time: { name: 'Current time of timer (hh:mm:ss)' },
+			time_hm: { name: 'Current time of timer (hh:mm)' },
+			time_h: { name: 'Current time of timer (hours)' },
+			time_m: { name: 'Current time of timer (minutes)' },
+			time_s: { name: 'Current time of timer (seconds)' },
+			tally: { name: 'Current tally text' },
+			paused: { name: 'Pause state' },
+		}
 
 		for (i = 0; i < 10; i++) {
-			variables = variables.concat([
-				{
-					name: `Timer ${i} icon`,
-					variableId: `timer_${i}_icon`,
-				},
-				{
-					name: `Timer ${i} hours`,
-					variableId: `timer_${i}_hours`,
-				},
-				{
-					name: `Timer ${i} minutes`,
-					variableId: `timer_${i}_minutes`,
-				},
-				{
-					name: `Timer ${i} seconds`,
-					variableId: `timer_${i}_seconds`,
-				},
-			])
+			variables[`timer_${i}_icon`] = { name: `Timer ${i} icon` }
+			variables[`timer_${i}_hours`] = { name: `Timer ${i} hours` }
+			variables[`timer_${i}_minutes`] = { name: `Timer ${i} minutes` }
+			variables[`timer_${i}_seconds`] = { name: `Timer ${i} seconds` }
 		}
 
 		for (i = 1; i < 5; i++) {
-			variables = variables.concat([
-				{
-					name: `Source ${i} icon`,
-					variableId: `source_${i}_icon`,
-				},
-				{
-					name: `Source ${i} hours`,
-					variableId: `source_${i}_hours`,
-				},
-				{
-					name: `Source ${i} minutes`,
-					variableId: `source_${i}_minutes`,
-				},
-				{
-					name: `Source ${i} seconds`,
-					variableId: `source_${i}_seconds`,
-				},
-			])
+			variables[`source_${i}_icon`] = { name: `Source ${i} icon` }
+			variables[`source_${i}_hours`] = { name: `Source ${i} hours` }
+			variables[`source_${i}_minutes`] = { name: `Source ${i} minutes` }
+			variables[`source_${i}_seconds`] = { name: `Source ${i} seconds` }
 		}
 
 		this.setVariableDefinitions(variables)
 		this.updateState()
 	}
 
-	updateState() {
+	updateState(): void {
 		let i: number
 
 		// Timers
@@ -253,7 +210,7 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 		this.updateLegacyState()
 	}
 
-	updateTimerVariables(timer: number) {
+	updateTimerVariables(timer: number): void {
 		let hours: string
 		let mins: string
 		let secs: string
@@ -301,7 +258,7 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 		})
 	}
 
-	updateSourceVariables(source: number) {
+	updateSourceVariables(source: number): void {
 		let hours: string
 		let mins: string
 		let secs: string
@@ -343,7 +300,7 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 		})
 	}
 
-	updateLegacyState() {
+	updateLegacyState(): void {
 		const info = this.feedbackState.time.split(':')
 		const states: StateMap = {
 			0: 'NORMAL',
@@ -378,7 +335,7 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 		})
 	}
 
-	init_osc() {
+	init_osc(): void {
 		this.log('info', 'Starting OSC listener')
 
 		const statePattern = /^\/clock\/(timer|source)\/([0-9])\/state/
@@ -487,7 +444,7 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 	}
 
 	// When module gets deleted
-	async destroy() {
+	async destroy(): Promise<void> {
 		if (this.listener) {
 			this.listener.close()
 		}
@@ -499,6 +456,3 @@ class ClockInstance extends InstanceBase<ClockConfig> {
 		}
 	}
 }
-
-runEntrypoint(ClockInstance, [])
-// UpgradeScripts)

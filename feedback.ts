@@ -1,9 +1,9 @@
 import {
-	CompanionFeedbackDefinitions,
 	combineRgb,
 	splitRgb,
-	CompanionAdvancedFeedbackResult,
-	InputValue,
+	type CompanionAdvancedFeedbackResult,
+	type CompanionFeedbackDefinitions,
+	type JsonValue,
 } from '@companion-module/base'
 
 // How long the left/right cue highlight takes to fade back out, in milliseconds. Must match clock.ts.
@@ -11,15 +11,38 @@ const CUE_FADE_MS = 2000
 // Half-cycle length for the blank cue's optional blink, in milliseconds
 const BLINK_PHASE_MS = 500
 
-function numberize(val: InputValue | undefined): number {
-	if (typeof val != 'string') {
-		return 0
-	}
-	return parseInt(val)
+type StateColorOptions = {
+	normal_fg: number
+	normal_bg: number
+	countdown_fg: number
+	countdown_bg: number
+	paused_fg: number
+	paused_bg: number
+	countup_fg: number
+	countup_bg: number
+	off_fg: number
+	off_bg: number
+}
+type PauseColorOptions = {
+	running_fg: number
+	running_bg: number
+	paused_fg: number
+	paused_bg: number
+}
+type CueColorOptions = { fg: number; bg: number }
+
+/** The type and options of every feedback this module offers, used to type the definitions and the presets */
+export type ClockFeedbacks = {
+	state_color: { type: 'advanced'; options: StateColorOptions }
+	pause_color: { type: 'advanced'; options: PauseColorOptions }
+	cue_left_active: { type: 'advanced'; options: CueColorOptions }
+	cue_right_active: { type: 'advanced'; options: CueColorOptions }
+	cue_blank_active: { type: 'advanced'; options: CueColorOptions & { blink: boolean } }
 }
 
-// Colorpicker options can come back as either a color number or a numeric string, depending on configuration
-function colorValue(val: InputValue | undefined, fallback: number): number {
+// Colorpicker options normally come back as a color number, but a field switched to expression mode
+// can evaluate to a numeric string, so both are accepted
+function colorValue(val: JsonValue | undefined, fallback: number): number {
 	if (typeof val === 'number') {
 		return val
 	}
@@ -37,12 +60,13 @@ function fadeColor(color: number, elapsedMs: number, fadeMs: number): number {
 	return combineRgb(Math.round(r * t), Math.round(g * t), Math.round(b * t))
 }
 
-export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefinitions {
+export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefinitions<ClockFeedbacks> {
 	return {
 		state_color: {
 			type: 'advanced',
 			name: 'Change color from state',
 			description: 'Change the colors of a bank according to the timer state',
+			affectedProperties: ['color', 'bgcolor'],
 			options: [
 				{
 					type: 'colorpicker',
@@ -108,26 +132,26 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 			callback: (feedback): CompanionAdvancedFeedbackResult => {
 				if (getState().state === '0') {
 					return {
-						color: numberize(feedback.options.normal_fg),
-						bgcolor: numberize(feedback.options.normal_bg),
+						color: colorValue(feedback.options.normal_fg, combineRgb(255, 255, 255)),
+						bgcolor: colorValue(feedback.options.normal_bg, combineRgb(255, 0, 0)),
 					}
 				}
 				if (getState().state === '1') {
 					return {
-						color: numberize(feedback.options.countdown_fg),
-						bgcolor: numberize(feedback.options.countdown_bg),
+						color: colorValue(feedback.options.countdown_fg, combineRgb(255, 255, 255)),
+						bgcolor: colorValue(feedback.options.countdown_bg, combineRgb(255, 0, 0)),
 					}
 				}
 				if (getState().state === '2') {
 					return {
-						color: numberize(feedback.options.countup_fg),
-						bgcolor: numberize(feedback.options.countup_bg),
+						color: colorValue(feedback.options.countup_fg, combineRgb(255, 255, 255)),
+						bgcolor: colorValue(feedback.options.countup_bg, combineRgb(255, 0, 0)),
 					}
 				}
 				if (getState().state === '3') {
 					return {
-						color: numberize(feedback.options.off_fg),
-						bgcolor: numberize(feedback.options.off_bg),
+						color: colorValue(feedback.options.off_fg, combineRgb(255, 255, 255)),
+						bgcolor: colorValue(feedback.options.off_bg, combineRgb(0, 0, 0)),
 					}
 				}
 				return {}
@@ -137,6 +161,7 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 			type: 'advanced',
 			name: 'Change color from pause',
 			description: 'Change the colors of a bank according to the pause state',
+			affectedProperties: ['color', 'bgcolor'],
 			options: [
 				{
 					type: 'colorpicker',
@@ -166,13 +191,13 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 			callback: (feedback): CompanionAdvancedFeedbackResult => {
 				if (getState().paused === '1') {
 					return {
-						color: numberize(feedback.options.paused_fg),
-						bgcolor: numberize(feedback.options.paused_bg),
+						color: colorValue(feedback.options.paused_fg, combineRgb(255, 255, 255)),
+						bgcolor: colorValue(feedback.options.paused_bg, combineRgb(0, 0, 0)),
 					}
 				}
 				return {
-					color: numberize(feedback.options.running_fg),
-					bgcolor: numberize(feedback.options.running_bg),
+					color: colorValue(feedback.options.running_fg, combineRgb(255, 255, 255)),
+					bgcolor: colorValue(feedback.options.running_bg, combineRgb(255, 0, 0)),
 				}
 			},
 		},
@@ -180,6 +205,7 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 			type: 'advanced',
 			name: 'Cue: left arrow active',
 			description: 'Highlights while the left arrow cue is active, fading back out over a couple of seconds',
+			affectedProperties: ['color', 'bgcolor'],
 			options: [
 				{
 					type: 'colorpicker',
@@ -212,6 +238,7 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 			type: 'advanced',
 			name: 'Cue: right arrow active',
 			description: 'Highlights while the right arrow cue is active, fading back out over a couple of seconds',
+			affectedProperties: ['color', 'bgcolor'],
 			options: [
 				{
 					type: 'colorpicker',
@@ -244,6 +271,7 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 			type: 'advanced',
 			name: 'Cue: blank active',
 			description: 'Highlights while the blank cue is currently active on the clock',
+			affectedProperties: ['color', 'bgcolor'],
 			options: [
 				{
 					type: 'colorpicker',
@@ -262,6 +290,8 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 					label: 'Blink',
 					id: 'blink',
 					default: false,
+					// Purely a presentation toggle for this feedback, nothing worth driving from an expression
+					disableAutoExpression: true,
 				},
 			],
 			callback: (feedback): CompanionAdvancedFeedbackResult => {

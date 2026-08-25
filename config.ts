@@ -1,7 +1,16 @@
-import { Regex, SomeCompanionConfigField } from '@companion-module/base'
+import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
 
-export interface ClockConfig {
-	version?: string
+/** The protocol versions the module knows how to talk, as stored in the config */
+export const CLOCK_VERSIONS = ['4', '3', 'mixed'] as const
+export type ClockVersion = (typeof CLOCK_VERSIONS)[number]
+
+/** Default port used by clock-8001 for both the command and the feedback direction */
+export const DEFAULT_PORT = '1245'
+/** Broadcast, so that a stock clock is reachable without knowing its address */
+export const DEFAULT_HOST = '255.255.255.255'
+
+export type ClockConfig = {
+	version?: ClockVersion
 	host?: string
 	port?: string
 	host2?: string
@@ -31,7 +40,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			label: 'Clock 1 IP address (you can also use broadcast)',
 			width: 8,
 			regex: Regex.IP,
-			default: '255.255.255.255',
+			default: DEFAULT_HOST,
 		},
 		{
 			type: 'textinput',
@@ -39,7 +48,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			label: 'Clock 1 port',
 			width: 4,
 			regex: Regex.PORT,
-			default: '1245',
+			default: DEFAULT_PORT,
 		},
 		{
 			type: 'textinput',
@@ -54,7 +63,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			label: 'Clock 2 port',
 			width: 4,
 			regex: Regex.PORT,
-			default: '1245',
+			default: DEFAULT_PORT,
 		},
 		{
 			type: 'textinput',
@@ -69,7 +78,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			label: 'Clock 3 port',
 			width: 4,
 			regex: Regex.PORT,
-			default: '1245',
+			default: DEFAULT_PORT,
 		},
 		{
 			type: 'textinput',
@@ -77,7 +86,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			label: 'Local port for OSC feedback',
 			width: 4,
 			regex: Regex.PORT,
-			default: '1245',
+			default: DEFAULT_PORT,
 		},
 	]
 }
