@@ -78,7 +78,7 @@ export function getPresets(config: ClockConfig): ClockPresets {
 		color: number,
 		bgColor: number,
 		action?: ClockPresetAction,
-		feedback?: ClockPresetFeedback,
+		feedbacks?: ClockPresetFeedback[],
 	): ClockPreset {
 		const btn: ClockPreset = {
 			type: 'simple',
@@ -95,8 +95,8 @@ export function getPresets(config: ClockConfig): ClockPresets {
 		if (action) {
 			btn.steps.push({ down: [action], up: [] })
 		}
-		if (feedback) {
-			btn.feedbacks.push(feedback)
+		if (feedbacks) {
+			btn.feedbacks.push(...feedbacks)
 		}
 
 		return btn
@@ -464,10 +464,14 @@ export function getPresets(config: ClockConfig): ClockPresets {
 					actionId: 'cue_left_v4',
 					options: {},
 				},
-				{
-					feedbackId: 'cue_left_active',
-					options: { fg: white, bg: combineRgb(200, 0, 0) },
-				},
+				// The advanced variant is used here rather than the boolean 'cue_left', because only it
+				// fades the highlight back out; the boolean one is the better pick for triggers
+				[
+					{
+						feedbackId: 'cue_left_active',
+						options: { fg: white, bg: combineRgb(200, 0, 0) },
+					},
+				],
 			),
 		)
 		register(
@@ -482,10 +486,14 @@ export function getPresets(config: ClockConfig): ClockPresets {
 					actionId: 'cue_right_v4',
 					options: {},
 				},
-				{
-					feedbackId: 'cue_right_active',
-					options: { fg: white, bg: combineRgb(0, 153, 0) },
-				},
+				// The advanced variant is used here rather than the boolean 'cue_right', because only it
+				// fades the highlight back out; the boolean one is the better pick for triggers
+				[
+					{
+						feedbackId: 'cue_right_active',
+						options: { fg: white, bg: combineRgb(0, 153, 0) },
+					},
+				],
 			),
 		)
 		register(
@@ -500,10 +508,12 @@ export function getPresets(config: ClockConfig): ClockPresets {
 					actionId: 'cue_blank_toggle_v4',
 					options: {},
 				},
-				{
-					feedbackId: 'cue_blank_active',
-					options: { fg: black, bg: combineRgb(255, 255, 0), blink: true },
-				},
+				[
+					{
+						feedbackId: 'cue_blank_active',
+						options: { fg: black, bg: combineRgb(255, 255, 0), blink: true },
+					},
+				],
 			),
 		)
 		structure.push({
@@ -794,21 +804,13 @@ export function getPresets(config: ClockConfig): ClockPresets {
 					actionId: 'kill_display',
 					options: {},
 				},
-				{
-					feedbackId: 'state_color',
-					options: {
-						normal_fg: combineRgb(255, 128, 0),
-						normal_bg: combineRgb(0, 0, 0),
-						countdown_fg: combineRgb(255, 128, 0),
-						countdown_bg: combineRgb(0, 0, 0),
-						countup_fg: combineRgb(255, 128, 0),
-						countup_bg: combineRgb(0, 0, 0),
-						paused_fg: combineRgb(255, 128, 0),
-						paused_bg: combineRgb(0, 0, 0),
-						off_fg: combineRgb(255, 255, 255),
-						off_bg: combineRgb(0, 0, 255),
+				[
+					{
+						feedbackId: 'clock_state',
+						options: { state: '3' },
+						style: { color: combineRgb(255, 255, 255), bgcolor: combineRgb(0, 0, 255) },
 					},
-				},
+				],
 			),
 		)
 
@@ -824,21 +826,13 @@ export function getPresets(config: ClockConfig): ClockPresets {
 					actionId: 'normal_mode',
 					options: {},
 				},
-				{
-					feedbackId: 'state_color',
-					options: {
-						normal_fg: combineRgb(255, 255, 255),
-						normal_bg: combineRgb(0, 0, 255),
-						paused_fg: combineRgb(255, 128, 0),
-						paused_bg: combineRgb(0, 0, 0),
-						countdown_fg: combineRgb(255, 128, 0),
-						countdown_bg: combineRgb(0, 0, 0),
-						countup_fg: combineRgb(255, 128, 0),
-						countup_bg: combineRgb(0, 0, 0),
-						off_fg: combineRgb(255, 128, 0),
-						off_bg: combineRgb(0, 0, 0),
+				[
+					{
+						feedbackId: 'clock_state',
+						options: { state: '0' },
+						style: { color: combineRgb(255, 255, 255), bgcolor: combineRgb(0, 0, 255) },
 					},
-				},
+				],
 			),
 		)
 
@@ -854,21 +848,13 @@ export function getPresets(config: ClockConfig): ClockPresets {
 					actionId: 'start_countup',
 					options: {},
 				},
-				{
-					feedbackId: 'state_color',
-					options: {
-						normal_fg: combineRgb(255, 128, 0),
-						normal_bg: combineRgb(0, 0, 0),
-						paused_fg: combineRgb(255, 128, 0),
-						paused_bg: combineRgb(0, 0, 0),
-						countdown_fg: combineRgb(255, 128, 0),
-						countdown_bg: combineRgb(0, 0, 0),
-						countup_bg: combineRgb(0, 0, 255),
-						countup_fg: combineRgb(255, 255, 255),
-						off_fg: combineRgb(255, 128, 0),
-						off_bg: combineRgb(0, 0, 0),
+				[
+					{
+						feedbackId: 'clock_state',
+						options: { state: '2' },
+						style: { color: combineRgb(255, 255, 255), bgcolor: combineRgb(0, 0, 255) },
 					},
-				},
+				],
 			),
 		)
 
@@ -884,15 +870,13 @@ export function getPresets(config: ClockConfig): ClockPresets {
 					actionId: 'pause_countdown',
 					options: {},
 				},
-				{
-					feedbackId: 'pause_color',
-					options: {
-						running_fg: combineRgb(255, 128, 0),
-						running_bg: combineRgb(0, 0, 0),
-						paused_fg: combineRgb(255, 255, 255),
-						paused_bg: combineRgb(0, 0, 255),
+				[
+					{
+						feedbackId: 'clock_paused',
+						options: {},
+						style: { color: combineRgb(255, 255, 255), bgcolor: combineRgb(0, 0, 255) },
 					},
-				},
+				],
 			),
 		)
 		register(
@@ -907,35 +891,41 @@ export function getPresets(config: ClockConfig): ClockPresets {
 					actionId: 'resume_countdown',
 					options: {},
 				},
-				{
-					feedbackId: 'pause_color',
-					options: {
-						running_fg: combineRgb(255, 128, 0),
-						running_bg: combineRgb(0, 0, 0),
-						paused_fg: combineRgb(255, 255, 255),
-						paused_bg: combineRgb(0, 0, 255),
+				[
+					{
+						feedbackId: 'clock_paused',
+						options: {},
+						style: { color: combineRgb(255, 255, 255), bgcolor: combineRgb(0, 0, 255) },
 					},
-				},
+				],
 			),
 		)
 		v3Groups.push(group('mode', 'Mode', modeIds))
 
+		// One boolean feedback per state, over a base style carrying the NORMAL look. Only one state
+		// can match at a time, so the stack never fights with itself.
+		// Note the advanced feedback declared paused colours but never read them, so a paused clock
+		// used to fall through unstyled; here it gets the colours that were always intended for it.
+		const timeButtonStates: { state: string; color: number; bgcolor: number }[] = [
+			{ state: '1', color: 16777215, bgcolor: 26112 },
+			{ state: '2', color: 16777215, bgcolor: 7954688 },
+			{ state: '3', color: combineRgb(0, 0, 0), bgcolor: combineRgb(0, 0, 0) },
+			{ state: '4', color: 16777215, bgcolor: 7954688 },
+		]
+
 		function timeButton(text: string, buttonText: string): ClockPreset {
-			return presetButton(text, buttonText, white, combineRgb(101, 0, 0), undefined, {
-				feedbackId: 'state_color',
-				options: {
-					normal_fg: combineRgb(255, 255, 255),
-					normal_bg: 6619136,
-					countup_fg: 16777215,
-					countup_bg: 7954688,
-					countdown_fg: 16777215,
-					countdown_bg: 26112,
-					paused_fg: 16777215,
-					paused_bg: 7954688,
-					off_fg: combineRgb(0, 0, 0),
-					off_bg: combineRgb(0, 0, 0),
-				},
-			})
+			return presetButton(
+				text,
+				buttonText,
+				combineRgb(255, 255, 255),
+				6619136,
+				undefined,
+				timeButtonStates.map(({ state, color, bgcolor }) => ({
+					feedbackId: 'clock_state',
+					options: { state: state },
+					style: { color: color, bgcolor: bgcolor },
+				})),
+			)
 		}
 
 		const displayIds: string[] = []
@@ -948,15 +938,13 @@ export function getPresets(config: ClockConfig): ClockPresets {
 		register(
 			displayIds,
 			`paused`,
-			presetButton('Pause status', '$(label:paused)', white, combineRgb(101, 0, 0), undefined, {
-				feedbackId: 'pause_color',
-				options: {
-					running_fg: combineRgb(255, 128, 0),
-					running_bg: combineRgb(0, 0, 0),
-					paused_fg: combineRgb(255, 255, 255),
-					paused_bg: combineRgb(0, 0, 255),
+			presetButton('Pause status', '$(label:paused)', combineRgb(255, 128, 0), black, undefined, [
+				{
+					feedbackId: 'clock_paused',
+					options: {},
+					style: { color: combineRgb(255, 255, 255), bgcolor: combineRgb(0, 0, 255) },
 				},
-			}),
+			]),
 		)
 		v3Groups.push(group('display_time', 'Display time', displayIds))
 

@@ -10,7 +10,7 @@ import OSC from 'osc'
 
 import { GetConfigFields, type ClockConfig } from './config.js'
 import { getActions } from './actions.js'
-import { getFeedbacks } from './feedback.js'
+import { CLOCK_STATES, getFeedbacks } from './feedback.js'
 import { getPresets } from './presets.js'
 import type { ClockInstanceTypes } from './types.js'
 
@@ -113,7 +113,7 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 	setCueState(cue: string): void {
 		this.feedbackState.cue = cue
 		this.feedbackState.cueTimestamp = Date.now()
-		this.checkFeedbacks('cue_left_active', 'cue_right_active', 'cue_blank_active')
+		this.checkFeedbacks('cue_left_active', 'cue_right_active', 'cue_blank_active', 'cue_left', 'cue_right', 'cue_blank')
 
 		if (this.cueFadeInterval) {
 			clearInterval(this.cueFadeInterval)
@@ -127,7 +127,7 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 					clearInterval(this.cueFadeInterval)
 					this.cueFadeInterval = undefined
 				}
-				this.checkFeedbacks('cue_left_active', 'cue_right_active')
+				this.checkFeedbacks('cue_left_active', 'cue_right_active', 'cue_left', 'cue_right')
 			}, 100)
 		}
 
@@ -139,7 +139,7 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 		// Re-check periodically while blank is active, so a feedback instance with 'Blink' enabled can animate
 		if (cue === 'blank') {
 			this.cueBlinkInterval = setInterval(() => {
-				this.checkFeedbacks('cue_blank_active')
+				this.checkFeedbacks('cue_blank_active', 'cue_blank')
 			}, CUE_BLINK_TICK_MS)
 		}
 	}
@@ -302,13 +302,6 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 
 	updateLegacyState(): void {
 		const info = this.feedbackState.time.split(':')
-		const states: StateMap = {
-			0: 'NORMAL',
-			1: 'COUNTDOWN',
-			2: 'COUNTUP',
-			3: 'OFF',
-			4: 'PAUSED',
-		}
 		const pause: StateMap = {
 			0: 'Run\\nning',
 			1: 'Pau\\nsed',
@@ -329,7 +322,7 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 			time_h: info[0],
 			time_m: info[1],
 			time_s: info[2],
-			state: states[this.feedbackState.state],
+			state: CLOCK_STATES.find((state) => state.id === this.feedbackState.state)?.label,
 			tally: this.feedbackState.tally,
 			paused: pause[this.feedbackState.paused],
 		})
@@ -377,12 +370,12 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 					this.feedbackState.time = `${a[1].value}:${a[2].value}:${a[3].value}`
 					this.feedbackState.tally = a[4].value
 					this.updateLegacyState()
-					this.checkFeedbacks('state_color')
+					this.checkFeedbacks('state_color', 'clock_state')
 				}
 				if (message.args.length === 6) {
 					this.feedbackState.paused = message.args[5].value
 					this.updateLegacyState()
-					this.checkFeedbacks('pause_color')
+					this.checkFeedbacks('pause_color', 'clock_paused')
 				}
 			}
 

@@ -3,6 +3,7 @@ import {
 	splitRgb,
 	type CompanionAdvancedFeedbackResult,
 	type CompanionFeedbackDefinitions,
+	type DropdownChoice,
 	type JsonValue,
 } from '@companion-module/base'
 
@@ -10,6 +11,18 @@ import {
 const CUE_FADE_MS = 2000
 // Half-cycle length for the blank cue's optional blink, in milliseconds
 const BLINK_PHASE_MS = 500
+
+/**
+ * The clock states as reported by the V3 /clock/state message, in the order the protocol numbers
+ * them. Shared with clock.ts, which renders the same labels into the 'state' variable.
+ */
+export const CLOCK_STATES: DropdownChoice[] = [
+	{ id: '0', label: 'NORMAL' },
+	{ id: '1', label: 'COUNTDOWN' },
+	{ id: '2', label: 'COUNTUP' },
+	{ id: '3', label: 'OFF' },
+	{ id: '4', label: 'PAUSED' },
+]
 
 type StateColorOptions = {
 	normal_fg: number
@@ -33,6 +46,16 @@ type CueColorOptions = { fg: number; bg: number }
 
 /** The type and options of every feedback this module offers, used to type the definitions and the presets */
 export type ClockFeedbacks = {
+	// Boolean feedbacks. These only decide whether they match; the style is the user's to pick, and
+	// they can also be used as trigger conditions.
+	clock_state: { type: 'boolean'; options: { state: string } }
+	clock_paused: { type: 'boolean'; options: Record<string, never> }
+	cue_left: { type: 'boolean'; options: Record<string, never> }
+	cue_right: { type: 'boolean'; options: Record<string, never> }
+	cue_blank: { type: 'boolean'; options: { blink: boolean } }
+	// The original advanced feedbacks, kept so existing buttons carry on working. Two of them still
+	// do something the boolean variants cannot: state_color picks a different colour per state from
+	// a single feedback, and the arrow cues fade their highlight back out.
 	state_color: { type: 'advanced'; options: StateColorOptions }
 	pause_color: { type: 'advanced'; options: PauseColorOptions }
 	cue_left_active: { type: 'advanced'; options: CueColorOptions }
@@ -60,12 +83,112 @@ function fadeColor(color: number, elapsedMs: number, fadeMs: number): number {
 	return combineRgb(Math.round(r * t), Math.round(g * t), Math.round(b * t))
 }
 
+/** True while the named cue is showing, over the same window the advanced variant fades across */
+function cueIsActive(state: ClockState, cue: string): boolean {
+	if (state.cue !== cue) {
+		return false
+	}
+	return Date.now() - state.cueTimestamp < CUE_FADE_MS
+}
+
 export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefinitions<ClockFeedbacks> {
 	return {
+		clock_state: {
+			type: 'boolean',
+			name: 'Clock is in state',
+			description: 'True while the clock reports the selected state',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'state',
+					choices: CLOCK_STATES,
+					default: '0',
+					// Referenced by the feedback itself rather than computed, and the choices are fixed
+					disableAutoExpression: true,
+				},
+			],
+			callback: (feedback) => {
+				return getState().state === String(feedback.options.state)
+			},
+		},
+		clock_paused: {
+			type: 'boolean',
+			name: 'Clock is paused',
+			description: 'True while the clock reports its timers as paused',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			options: [],
+			callback: () => {
+				return getState().paused === '1'
+			},
+		},
+		cue_left: {
+			type: 'boolean',
+			name: 'Cue: left arrow is active',
+			description: 'True for a couple of seconds after the left arrow cue is shown',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(200, 0, 0),
+			},
+			options: [],
+			callback: () => {
+				return cueIsActive(getState(), 'left')
+			},
+		},
+		cue_right: {
+			type: 'boolean',
+			name: 'Cue: right arrow is active',
+			description: 'True for a couple of seconds after the right arrow cue is shown',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 153, 0),
+			},
+			options: [],
+			callback: () => {
+				return cueIsActive(getState(), 'right')
+			},
+		},
+		cue_blank: {
+			type: 'boolean',
+			name: 'Cue: blank is active',
+			description: 'True while the blank cue is currently active on the clock',
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			options: [
+				{
+					type: 'checkbox',
+					label: 'Blink',
+					id: 'blink',
+					default: false,
+					// Purely a presentation toggle for this feedback, nothing worth driving from an expression
+					disableAutoExpression: true,
+				},
+			],
+			callback: (feedback) => {
+				if (getState().cue !== 'blank') {
+					return false
+				}
+				if (feedback.options.blink && Math.floor(Date.now() / BLINK_PHASE_MS) % 2 === 1) {
+					return false
+				}
+				return true
+			},
+		},
 		state_color: {
 			type: 'advanced',
-			name: 'Change color from state',
-			description: 'Change the colors of a bank according to the timer state',
+			name: 'Change color from state (advanced)',
+			sortName: 'zz Change color from state',
+			description:
+				'Sets its own colors, one set per clock state. Prefer the boolean feedback unless you need several states covered by a single feedback',
 			affectedProperties: ['color', 'bgcolor'],
 			options: [
 				{
@@ -159,8 +282,10 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 		},
 		pause_color: {
 			type: 'advanced',
-			name: 'Change color from pause',
-			description: 'Change the colors of a bank according to the pause state',
+			name: 'Change color from pause (advanced)',
+			sortName: 'zz Change color from pause',
+			description:
+				'Sets its own colors for the running and paused states. Prefer the boolean feedback unless you need both states covered by a single feedback',
 			affectedProperties: ['color', 'bgcolor'],
 			options: [
 				{
@@ -203,7 +328,8 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 		},
 		cue_left_active: {
 			type: 'advanced',
-			name: 'Cue: left arrow active',
+			name: 'Cue: left arrow active, fading (advanced)',
+			sortName: 'zz Cue: left arrow active',
 			description: 'Highlights while the left arrow cue is active, fading back out over a couple of seconds',
 			affectedProperties: ['color', 'bgcolor'],
 			options: [
@@ -236,7 +362,8 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 		},
 		cue_right_active: {
 			type: 'advanced',
-			name: 'Cue: right arrow active',
+			name: 'Cue: right arrow active, fading (advanced)',
+			sortName: 'zz Cue: right arrow active',
 			description: 'Highlights while the right arrow cue is active, fading back out over a couple of seconds',
 			affectedProperties: ['color', 'bgcolor'],
 			options: [
@@ -269,7 +396,8 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 		},
 		cue_blank_active: {
 			type: 'advanced',
-			name: 'Cue: blank active',
+			name: 'Cue: blank active (advanced)',
+			sortName: 'zz Cue: blank active',
 			description: 'Highlights while the blank cue is currently active on the clock',
 			affectedProperties: ['color', 'bgcolor'],
 			options: [
