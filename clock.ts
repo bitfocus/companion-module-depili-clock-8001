@@ -155,9 +155,11 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 		this.log('info', 'Starting initialization')
 		this.config = config
 		this.init_variables()
+		// Presets name the actions and feedbacks they place, and Companion resolves those names as
+		// soon as the presets arrive, so both have to be registered before setPresets() runs
 		this.setActions()
-		this.setPresets()
 		this.setFeedbackDefinitions(getFeedbacks(() => this.feedbackState))
+		this.setPresets()
 		this.init_osc()
 		this.updateStatus(InstanceStatus.Ok)
 		this.log('info', 'Init done')
