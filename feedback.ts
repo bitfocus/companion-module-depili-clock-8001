@@ -3,6 +3,7 @@ import {
 	splitRgb,
 	type CompanionAdvancedFeedbackResult,
 	type CompanionFeedbackDefinitions,
+	type CompanionInputFieldNumber,
 	type DropdownChoice,
 	type JsonValue,
 } from '@companion-module/base'
@@ -53,6 +54,12 @@ export type ClockFeedbacks = {
 	cue_left: { type: 'boolean'; options: Record<string, never> }
 	cue_right: { type: 'boolean'; options: Record<string, never> }
 	cue_blank: { type: 'boolean'; options: { blink: boolean } }
+	timer_active: { type: 'boolean'; options: { timer: number } }
+	timer_expired: { type: 'boolean'; options: { timer: number } }
+	timer_paused: { type: 'boolean'; options: { timer: number } }
+	source_visible: { type: 'boolean'; options: { source: number } }
+	source_expired: { type: 'boolean'; options: { source: number } }
+	source_paused: { type: 'boolean'; options: { source: number } }
 	// The original advanced feedbacks, kept so existing buttons carry on working. Two of them still
 	// do something the boolean variants cannot: state_color picks a different colour per state from
 	// a single feedback, and the arrow cues fade their highlight back out.
@@ -83,6 +90,19 @@ function fadeColor(color: number, elapsedMs: number, fadeMs: number): number {
 	return combineRgb(Math.round(r * t), Math.round(g * t), Math.round(b * t))
 }
 
+/**
+ * The timer and source pickers are number fields, but an expression can evaluate to anything, so the
+ * index is checked against the array before it is used. An out of range pick reports false rather
+ * than throwing.
+ */
+function stateAt<T>(states: T[], option: JsonValue | undefined): T | undefined {
+	const index = typeof option === 'number' ? option : typeof option === 'string' ? parseInt(option, 10) : NaN
+	if (!Number.isInteger(index) || index < 0 || index >= states.length) {
+		return undefined
+	}
+	return states[index]
+}
+
 /** True while the named cue is showing, over the same window the advanced variant fades across */
 function cueIsActive(state: ClockState, cue: string): boolean {
 	if (state.cue !== cue) {
@@ -92,6 +112,25 @@ function cueIsActive(state: ClockState, cue: string): boolean {
 }
 
 export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefinitions<ClockFeedbacks> {
+	const timerOption: CompanionInputFieldNumber<'timer'> = {
+		type: 'number',
+		label: 'Timer number',
+		id: 'timer',
+		default: 1,
+		min: 0,
+		max: 9,
+		asInteger: true,
+	}
+	const sourceOption: CompanionInputFieldNumber<'source'> = {
+		type: 'number',
+		label: 'Source number',
+		id: 'source',
+		default: 1,
+		min: 1,
+		max: 4,
+		asInteger: true,
+	}
+
 	return {
 		clock_state: {
 			type: 'boolean',
@@ -181,6 +220,84 @@ export function getFeedbacks(getState: () => ClockState): CompanionFeedbackDefin
 					return false
 				}
 				return true
+			},
+		},
+		timer_active: {
+			type: 'boolean',
+			name: 'Timer is active',
+			description: 'True while the selected V4 timer is running',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 153, 0),
+			},
+			options: [timerOption],
+			callback: (feedback) => {
+				return stateAt(getState().timers, feedback.options.timer)?.active === true
+			},
+		},
+		timer_expired: {
+			type: 'boolean',
+			name: 'Timer has expired',
+			description: 'True while the selected V4 timer has run past zero',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(255, 0, 0),
+			},
+			options: [timerOption],
+			callback: (feedback) => {
+				return stateAt(getState().timers, feedback.options.timer)?.expired === true
+			},
+		},
+		timer_paused: {
+			type: 'boolean',
+			name: 'Timer is paused',
+			description: 'True while the selected V4 timer is paused',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			options: [timerOption],
+			callback: (feedback) => {
+				return stateAt(getState().timers, feedback.options.timer)?.paused === true
+			},
+		},
+		source_visible: {
+			type: 'boolean',
+			name: 'Source is visible',
+			description: 'True while the selected V4 time source is shown. Invert it to catch a hidden source',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 153, 0),
+			},
+			options: [sourceOption],
+			callback: (feedback) => {
+				return stateAt(getState().sources, feedback.options.source)?.hidden === false
+			},
+		},
+		source_expired: {
+			type: 'boolean',
+			name: 'Source has expired',
+			description: 'True while the selected V4 time source has run past zero',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(255, 0, 0),
+			},
+			options: [sourceOption],
+			callback: (feedback) => {
+				return stateAt(getState().sources, feedback.options.source)?.expired === true
+			},
+		},
+		source_paused: {
+			type: 'boolean',
+			name: 'Source is paused',
+			description: 'True while the selected V4 time source is paused',
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			options: [sourceOption],
+			callback: (feedback) => {
+				return stateAt(getState().sources, feedback.options.source)?.paused === true
 			},
 		},
 		state_color: {

@@ -405,6 +405,7 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 					if (message.args.length === 8) {
 						const timer = message.address.match(timerPattern)[1]
 						const args = message.args
+						const previous = this.feedbackState.timers[timer]
 						this.feedbackState.timers[timer] = {
 							active: args[1].value,
 							time: args[2].value,
@@ -415,11 +416,20 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 							paused: args[7].value,
 						}
 						this.updateTimerVariables(timer)
+						const current = this.feedbackState.timers[timer]
+						if (
+							previous.active !== current.active ||
+							previous.expired !== current.expired ||
+							previous.paused !== current.paused
+						) {
+							this.checkFeedbacks('timer_active', 'timer_expired', 'timer_paused')
+						}
 					}
 				} else if (message.address.match(sourcePattern)) {
 					if (message.args.length === 10) {
 						const source = message.address.match(sourcePattern)[1]
 						const args = message.args
+						const previous = this.feedbackState.sources[source]
 						this.feedbackState.sources[source] = {
 							hidden: args[1].value,
 							time: args[2].value,
@@ -432,6 +442,14 @@ export default class ClockInstance extends InstanceBase<ClockInstanceTypes> {
 							mode: args[9].value,
 						}
 						this.updateSourceVariables(source)
+						const current = this.feedbackState.sources[source]
+						if (
+							previous.hidden !== current.hidden ||
+							previous.expired !== current.expired ||
+							previous.paused !== current.paused
+						) {
+							this.checkFeedbacks('source_visible', 'source_expired', 'source_paused')
+						}
 					}
 				}
 			}
